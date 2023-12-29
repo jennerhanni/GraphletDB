@@ -8,7 +8,8 @@
     "coverage": "jest --coverage"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "verbose": true
   },
   "repository": {
     "type": "git",
