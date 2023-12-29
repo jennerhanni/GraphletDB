@@ -1,0 +1,32 @@
+{
+  "name": "graphletjs",
+  "version": "0.0.1",
+  "description": "Manage an extensible property graph database.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jennerhanni/GraphletJS.git"
+  },
+  "keywords": [
+    "graph-database",
+    "property-graph",
+    "database-management",
+    "nosql"
+  ],
+  "author": "Jenner Hanni",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/jennerhanni/GraphletJS/issues"
+  },
+  "homepage": "https://github.com/jennerhanni/GraphletJS#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
