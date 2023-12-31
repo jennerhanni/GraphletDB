@@ -90,6 +90,23 @@ const validNodes = [
 
 ## API Reference
 
+Functions are separated into three areas:
+
+1. CRUD Node Handling
+- initList
+- initNode
+- getListOfAllLabels
+- addNode
+- updateNode
+- removeNode
+
+2. Database Validation
+- validateList()
+
+3. Reference Management
+- convertNodeToCslJson(nodes, nodeId)
+- convertNodeFromCslJson(nodes, nodeId)
+
 **initList()**
 
 Return a new list containing one Label object. 
