@@ -200,7 +200,7 @@ If a Label node does not exist for that label, create the Label node, then creat
 
 Return a single object of type Label, if that label exists.
 
-### 🔧 getNodeByKeypair(nodes, key, value, boolFirstOnly)
+### 🔧 getNodeByKeyPair(nodes, key, value, boolFirstOnly)
 
 This function retrieves one or more nodes from a list based on a specified key-value pair. If `boolFirstOnly` is true, the function returns the first node that matches the key-value pair. If false, it returns all nodes matching the key-value pair.
 
@@ -219,10 +219,10 @@ let nodes = [
     { id: 'node2', type: 'Label', data: {...} },
 ];
 
-let firstLabelNode = getNodeByKeypair(nodes, 'type', 'Label', true);
+let firstLabelNode = getNodeByKeyPair(nodes, 'type', 'Label', true);
 console.log(firstLabelNode);
 
-let allLabelNodes = getNodeByKeypair(nodes, 'type', 'Label', false);
+let allLabelNodes = getNodeByKeyPair(nodes, 'type', 'Label', false);
 console.log(allLabelNodes);
 ```
 

@@ -2,7 +2,7 @@ const { aboutGraphletJS,
         initList,
         getRandomToken,
         getListOfLabels,
-        getNodeByKeypair,
+        getNodeByKeyPair,
         initNode } = require('../src/index');
 
 let state = {
@@ -62,17 +62,17 @@ function demoInitNode(label) {
 }
 window.demoInitNode = demoInitNode
 
-function demoGetNodeByKeypair(key, value) {
-    console.log('demoGetNodeByKeypair', key, value)
-    state.whichNode = getNodeByKeypair(state.nodes, key, value, true)
+function demoGetNodeByKeyPair(key, value) {
+    console.log('demoGetNodeByKeyPair', key, value)
+    state.whichNode = getNodeByKeyPair(state.nodes, key, value, true)
     console.log(state.whichNode)
     render();
 }
-window.demoGetNodeByKeypair = demoGetNodeByKeypair
+window.demoGetNodeByKeyPair = demoGetNodeByKeyPair
 
 function demoGetNodeById(val) {
     console.log('demoGetNodeById', val)
-    state.whichNode = getNodeByKeypair(state.nodes, 'id', val, true)[0]
+    state.whichNode = getNodeByKeyPair(state.nodes, 'id', val, true)[0]
     console.log(state.whichNode)
     render();
 }

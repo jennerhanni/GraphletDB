@@ -92,15 +92,21 @@ function initNode(nodes, label) {
 }
 window.initNode = initNode
 
-// get a node from the list by keypair
-function getNodeByKeypair(nodes, key, value, boolFirstOnly) {
+// 
+function getNodeByKeyPairs(nodes, KeyPairList, boolFirstOnly) {
+    console.log('getNodeByKeyPairs', KeyPairList, boolFirstOnly)
+}
+window.getNodeByKeyPairs
+
+// get a node from the list by KeyPair
+function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
     if (boolFirstOnly) {
         return [Object.assign({}, nodes.find(node => node[key] === value))]
     } else {
         return [Object.assign({}, nodes.filter(node => node[key] === value))]
     }
 }   
-window.getNodeByKeypair = getNodeByKeypair
+window.getNodeByKeyPair = getNodeByKeyPair
 
 // add a new node to the list
 function addNode(nodes, nodeToAdd) {
@@ -148,7 +154,7 @@ module.exports = {
 
     initList,
     initNode,
-    getNodeByKeypair,
+    getNodeByKeyPair,
     
     addNode,
     removeNode,
