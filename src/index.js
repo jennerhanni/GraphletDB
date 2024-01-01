@@ -126,7 +126,12 @@ function addNode(nodes, nodeToAdd) {
             data: nodes,
             msg: 'ID_EXISTS'
         }
-    } else{
+    } else if (nodeToAdd.id === '') {
+        return {
+            data: nodes,
+            msg: 'ID_CANNOT_BE_AN_EMPTY_STRING'
+        }
+    } else {
         // todo: if any rel-prefixed props exist, 
         //       look up the full target node based on the id
         //       and add this node.id to the relNodes array in the targetNode
