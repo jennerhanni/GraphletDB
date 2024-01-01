@@ -18,7 +18,6 @@ window.aboutGraphletJS = aboutGraphletJS;
 // generate a random lowercase hexstring
 // that is not already used as an id in nodes
 function getRandomToken(nodes, len) {    
-
     let token;
     let isUnique;
 
@@ -32,8 +31,10 @@ function getRandomToken(nodes, len) {
         isUnique = !nodes.some(node => node.id === token);
     } while (!isUnique);
 
-    console.log("getRandomToken", len, token);
-    return token
+    return {
+        data: token,
+        msg: "SUCCESS"
+    }
 }
 window.getRandomToken = getRandomToken;
 

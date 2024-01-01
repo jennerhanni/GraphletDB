@@ -40,12 +40,15 @@ function demoAboutGraphletJS() {
         state.aboutGraphletJS = res.data
     }
     render();
-}
+} 
 window.demoAboutGraphletJS = demoAboutGraphletJS;
 
 function demoGetRandomToken(len) {
-    state.randomToken = getRandomToken(state.nodes, len);
-    console.log(state.randomToken)
+    console.log('demoGetRandomToken', len)
+    let res = getRandomToken(state.nodes, len)
+    if (res.msg === 'SUCCESS') {
+        state.randomToken = res.data
+    }
     render();
 }
 window.demoGetRandomToken = demoGetRandomToken;
