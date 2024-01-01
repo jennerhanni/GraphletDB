@@ -2,7 +2,8 @@ const { aboutGraphletJS,
         initList,
         getRandomToken,
         getListOfLabels,
-        getNodeByKeypair } = require('../src/index');
+        getNodeByKeypair,
+        initNode } = require('../src/index');
 
 let state = {
     nodes: [],
@@ -39,6 +40,10 @@ function demoGetListOfLabels(objOrIds) {
     render();
 }
 window.demoGetListOfLabels = demoGetListOfLabels
+
+function demoInitNode(label) {
+    console.log('demoInitNode', label)
+}
 
 function demoGetNodeByKeypair(key, value) {
     console.log('demoGetNodeByKeypair', key, value)
@@ -84,6 +89,11 @@ function render() {
     state.listOfLabels.forEach(label => {
         const listItem = document.createElement('li');
         listItem.textContent = label;
+
+        listItem.onclick = function() {
+            demoInitNode(listItem.textContent);
+        };
+        
         labelsListElement.appendChild(listItem);
     });
 }
