@@ -1,0 +1,80 @@
+
+
+html {
+    padding: 0;
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 12pt;
+}
+
+body {
+    background-color: cyan;
+    padding: 0;
+    margin: 0;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    col-gap: 20px;
+    min-height: 100vh;   
+}
+
+.left, .center, .right {
+    text-align: center;
+    flex: 1;
+}
+
+.nav {
+    width: 200px;
+    flex: 0 0 auto;
+    background-color: #f0f0f0;
+    padding: 10px;
+    box-sizing: border-box;
+    min-height: 100%;
+}
+
+.nav button {
+    width: 100%;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 4px #2e7d32;
+}
+
+.nav button:hover {
+    background-color: #66bb6a;
+    box-shadow: 0 2px #2e7d32;
+}
+
+.nav button:active {
+    box-shadow: 0 1px #2e7d32;
+}
+
+.nav button:last-child {
+    margin-bottom: 0;
+}
+
+.inside {
+    padding: 20px;
+}
+
+.randomToken {
+    background-color: lightgreen;
+    margin: 0;
+    padding: 0;
+}
+
+.labelsList { 
+    background-color: lightgoldenrodyellow;
+}
+
+.right { 
+    background-color: lightblue; 
+}

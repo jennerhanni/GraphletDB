@@ -2,18 +2,40 @@
 <html>
 <head>
     <title>GraphletJS Demo</title>
+    <link rel="stylesheet" type="text/css" href="demo.css">
 </head>
 <body>
-    <button onclick="demoInitList()">init a list</button>
-    <button onclick="demoGetRandomToken(12)">get a random token</button>
-    <button onclick="demoGetListOfLabels('id')">get the list of labels</button>
-    <p id="randomToken">Random token: </p>
-    <p id="nodeCount">Your list has 0 items</p>
-    
-    <ul id="nodesList"></ul>
-
-    <p>Labels</p>
-    <ul id="labelsList"></ul>
+    <div class="wrapper">
+        <div class="nav">
+            <button onclick="demoInitList()">init a list</button>
+            <button onclick="demoGetRandomToken(12)">get a random token</button>
+            <button onclick="demoGetListOfLabels('id')">get the list of labels</button>        
+        </div>
+        <div class="left">
+            <div class="randomToken">
+                <div class="inside">
+                    <p>Random Token</p>
+                    <div id="randomToken"></div>
+                </div>
+            </div>
+            <div class="labelsList">
+                <div class="inside">
+                    <p>Labels</p>
+                    <ul id="labelsList"></ul>   
+                </div>         
+            </div>
+        </div>
+        <div class="center">
+            <p id="nodeCount">Your list has 0 items</p>
+            
+            <ul id="nodesList"></ul>
+        
+        </div>
+        <div class="right">
+            <p>Active Node</p>
+            <div id="whichNodeObj"></div>
+        </div>
+    </div>
     
     <script src="../dist/library.bundle.js"></script>
     <script src="../dist/demo.bundle.js"></script>

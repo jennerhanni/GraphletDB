@@ -1,7 +1,8 @@
 const { aboutGraphlet,
         initList,
         getRandomToken,
-        getListOfLabels } = require('../src/index');
+        getListOfLabels,
+        getNodeByKeypair } = require('../src/index');
 
 let state = {
     nodes: [],
@@ -30,9 +31,17 @@ function demoGetListOfLabels(objOrIds) {
 }
 window.demoGetListOfLabels = demoGetListOfLabels
 
+function demoGetNodeByKeypair(key, value) {
+    console.log('demoGetNodeByKeypair', key, value)
+    state.which_node = demoGetNodeByKeypair(state.nodes, key, value, true)
+    console.log(state.which_node)
+    render();
+}
+
 function render() {
     const nodesListElement = document.getElementById('nodesList');
     const labelsListElement = document.getElementById('labelsList');
+    const whichNodeObjElement = document.getElementById('whichNodeObj');
     const countParagraph = document.getElementById('nodeCount');
     const randomTokenParagraph = document.getElementById('randomToken');
 
@@ -54,7 +63,11 @@ function render() {
 
     // Update the random token paragraph
     if (randomToken) {
-        randomTokenParagraph.textContent = `Random token: ${state.randomToken}`;
+        randomTokenParagraph.textContent = `${state.randomToken}`;
+    }
+
+    if (whichNodeObjElement) {
+        whichNodeObjElement.textContent = `WhichNode: ${whichNode['id']}`
     }
 
     // Update the list of labels
