@@ -15,6 +15,7 @@ let state = {
     aboutGraphletJS: '',
     whichNode: {},
     createNode: {},
+    showCreateNode: false,
     searchResults: [],
 };
 
@@ -26,6 +27,7 @@ function demoClearAll() {
     state.aboutGraphletJS = '';
     state.whichNode = {};
     state.createNode = {};
+    state.showCreateNode = false;
     state.searchResults = [];
     render();
 }
@@ -142,7 +144,8 @@ function demoSetWhichNode(nodeToSet) {
 window.demoSetWhichNode = demoSetWhichNode
 
 function demoSetCreateNode(nodeToSet) {
-    state.createNode = nodeToSet
+    state.createNode = nodeToSet;
+    state.showCreateNode = true;
     render();
 }
 window.demoSetCreateNode = demoSetCreateNode
@@ -186,14 +189,53 @@ function renderNodesList(nodesListElement) {
 function updateCreateNodeModal(createNodeModalDiv) {
     if (!createNodeModalDiv) return;
 
-    console.log('createNodeModalDiv', state.createNode)
+    console.log('createNodeModalDiv', state.createNode, state.showCreateNode)
 
-    // Toggle the display of the modal
-    if (state.createNode) {
-        createNodeModalDiv.style.display = 'flex'; // Show the modal
-    } else {
-        createNodeModalDiv.style.display = 'none'; // Hide the modal
+    createNodeModalDiv.innerHTML = ''; // Clear existing content
+
+    if (state.createNode && Object.keys(state.createNode).length > 0) {
+        createAndAppend(createNodeModalDiv, 'h4', '', state.createNode.label || 'Node');
+
+        const form = createAndAppend(createNodeModalDiv, 'form', 'node-form');
+        const propertiesToShow = ['id', 'date'].concat(
+            Object.keys(state.createNode).filter(key => !['id', 'date', 'label'].includes(key))
+        );
+
+        propertiesToShow.forEach(key => {
+            if (state.createNode[key] !== undefined) {
+                const fieldDiv = createAndAppend(form, 'div', 'node-field');
+                createAndAppend(fieldDiv, 'label', 'node-label', `${key}: `, { for: `input-${key}` });
+                const input = createAndAppend(fieldDiv, 'input', 'node-input', '', {
+                    id: `input-${key}`,
+                    value: state.createNode[key],
+                    name: key
+                });
+
+                input.addEventListener('change', (event) => {
+                    state.createNode[key] = event.target.value;
+                });
+
+                // Check if the current property is 'date' and add a divider
+                if (key === 'date') {
+                    createAndAppend(form, 'hr', 'node-divider');
+                }
+            }
+        });
+
+        const saveButton = document.createElement('button');
+        saveButton.type = 'button'; // Prevent form from submitting
+        saveButton.textContent = 'Update node in list';
+        saveButton.classList.add('save-button');
+        saveButton.addEventListener('click', () => demoUpdateNode(state.createNode));
+        form.appendChild(saveButton);
     }
+    
+    if (state.showCreateNode) {
+        createNodeModalDiv.style.display = 'flex';
+    } else {
+        createNodeModalDiv.style.display = 'none';
+    }
+    
 }
 
 function updateWhichNodeDiv(whichNodeDiv) {
