@@ -21,6 +21,7 @@ window.demoAboutGraphletJS = demoAboutGraphletJS;
 function demoInitList() {
     state.nodes = initList();
     console.log('demoInitList', state.nodes);
+    state.listOfLabels = getListOfLabels(state.nodes, 'id');
     render();
 }
 window.demoInitList = demoInitList;
@@ -28,7 +29,6 @@ window.demoInitList = demoInitList;
 function demoGetRandomToken(len) {
     state.randomToken = getRandomToken(state.nodes, len);
     console.log(state.randomToken)
-    state.listOfLabels = getListOfLabels(state.nodes, 'id')
     render();
 }
 window.demoGetRandomToken = demoGetRandomToken;
@@ -51,7 +51,6 @@ function render() {
     const aboutGraphletJSParagraph = document.getElementById('aboutGraphletJS')
     const nodesListElement = document.getElementById('nodesList');
     const labelsListElement = document.getElementById('labelsList');
-    const whichNodeObjElement = document.getElementById('whichNodeObj');
     const countParagraph = document.getElementById('nodeCount');
     const randomTokenParagraph = document.getElementById('randomToken');
 
@@ -79,10 +78,6 @@ function render() {
     // Update the random token paragraph
     if (randomToken) {
         randomTokenParagraph.textContent = `${state.randomToken}`;
-    }
-
-    if (whichNodeObjElement) {
-        whichNodeObjElement.textContent = `WhichNode: ${whichNode['id']}`
     }
 
     // Update the list of labels

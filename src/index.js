@@ -45,6 +45,8 @@ function getListOfLabels(nodes, objOrIds) {
         } else {
             return []
         }
+    } else {
+        return []
     }
 }
 window.getListOfLabels = getListOfLabels
