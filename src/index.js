@@ -82,10 +82,11 @@ function initNode(nodes, label) {
     
     if (!labelNode) {
         labelNode = initLabelNode();
-        labelNode.id = getRandomToken(nodes, 12);
         labelNode.label = 'Label';
-        labelNode.date = getDateObjects();
     }
+
+    labelNode.id = getRandomToken(nodes, 12);
+    labelNode.date = getDateObjects();
 
     console.log('initNode', labelNode)
     return labelNode;
@@ -132,6 +133,10 @@ function addNode(nodes, nodeToAdd) {
             msg: 'ID_CANNOT_BE_AN_EMPTY_STRING'
         }
     } else {
+        // todo: don't create a new Label node if strLabel already exists. 
+
+        // todo: figure out the long-term fix to indicate uniqueness on certain props
+        
         // todo: if any rel-prefixed props exist, 
         //       look up the full target node based on the id
         //       and add this node.id to the relNodes array in the targetNode

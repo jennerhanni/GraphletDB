@@ -110,16 +110,14 @@ ul {
     background-color: #66bb6a;
 }
 
-#whichNode,
-.createNode {
+#whichNode {
     margin: 20px auto;  
     width: 400px;
     border: 2px solid darkblue;
     border-radius: 10px;
     padding: 0;
 }
-#whichNode h4,
-.createNode h4 {
+#whichNode h4 {
     width: 100%;
     text-align: center;
     margin: 0;
@@ -187,25 +185,11 @@ ul {
     text-align: right;
 }
 
-.createNodeModal {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    left: 400px;
-    top: 200px;
-    width: 500px;
-    height: 600px;
-    overflow: auto;
-    justify-content: center;
-    align-items: center;
-    border: 5px solid yellow;
-    background-color: blue;
-}
-
-.createNodeModalContent {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid white;
-    width: 80%;
+.save-button {
+    background-color: darkblue;
+    padding: 5px 10px;
+    float: right;
+    margin: 5px;
+    color: white;
+    border-radius: 10px;
 }

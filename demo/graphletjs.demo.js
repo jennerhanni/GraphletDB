@@ -14,8 +14,7 @@ let state = {
     listOfLabels: [],
     aboutGraphletJS: '',
     whichNode: {},
-    createNode: {},
-    showCreateNode: false,
+    whichNodeMode: '', // valid options: 'create', 'edit', empty string
     searchResults: [],
 };
 
@@ -26,8 +25,6 @@ function demoClearAll() {
     state.listOfLabels = [];
     state.aboutGraphletJS = '';
     state.whichNode = {};
-    state.createNode = {};
-    state.showCreateNode = false;
     state.searchResults = [];
     render();
 }
@@ -66,14 +63,13 @@ function demoInitNode(label) {
     console.log('demoInitNode', label)
     let newNode = initNode(state.nodes, label)
     console.log('demoInitNode', label, newNode)
-    demoSetCreateNode(newNode)
-    render();
+    demoSetWhichNode(newNode, 'create')
 }
 window.demoInitNode = demoInitNode
 
 function demoGetNodeByKeyPair(key, value) {
     console.log('demoGetNodeByKeyPair', key, value)
-    state.whichNode = demoSetWhichNode(getNodeByKeyPair(state.nodes, key, value, true)[0])
+    state.whichNode = demoSetWhichNode(getNodeByKeyPair(state.nodes, key, value, true)[0], 'update')
     console.log(state.whichNode)
     render();
 }
@@ -108,6 +104,7 @@ function demoAddNode(nodeToAdd) {
     let res = addNode(state.nodes, nodeToAdd)
     if (res.msg === 'SUCCESS') {
         state.nodes = res.data
+        state.whichNodeMode = 'update'
     }
     render();
 }
@@ -137,18 +134,12 @@ function demoRemoveNode(nodeToRemove) {
 }
 window.demoRemoveNode = demoRemoveNode
 
-function demoSetWhichNode(nodeToSet) {
+function demoSetWhichNode(nodeToSet, op) {
     state.whichNode = nodeToSet
+    state.whichNodeMode = op
     render();
 }
 window.demoSetWhichNode = demoSetWhichNode
-
-function demoSetCreateNode(nodeToSet) {
-    state.createNode = nodeToSet;
-    state.showCreateNode = true;
-    render();
-}
-window.demoSetCreateNode = demoSetCreateNode
 
 function renderNodesList(nodesListElement) {
     state.nodes.forEach(node => {
@@ -159,19 +150,19 @@ function renderNodesList(nodesListElement) {
         // Create and append label span
         const labelSpan = document.createElement('span');
         labelSpan.textContent = node['label'];
-        labelSpan.onclick = () => demoSetWhichNode(node);
+        labelSpan.onclick = () => demoSetWhichNode(node, 'update');
         listItem.appendChild(labelSpan);
     
         // Create and append id span
         const idSpan = document.createElement('span');
         idSpan.textContent = node['id'];
-        idSpan.onclick = () => demoSetWhichNode(node);
+        idSpan.onclick = () => demoSetWhichNode(node, 'update');
         listItem.appendChild(idSpan);
     
         // Create and append date span
         const dateSpan = document.createElement('span');
         dateSpan.textContent = node['date'];
-        dateSpan.onclick = () => demoSetWhichNode(node);
+        dateSpan.onclick = () => demoSetWhichNode(node, 'update');
         listItem.appendChild(dateSpan);
     
         // Create and append trash can icon
@@ -186,56 +177,27 @@ function renderNodesList(nodesListElement) {
     });   
 }
 
-function updateCreateNodeModal(createNodeModalDiv) {
-    if (!createNodeModalDiv) return;
+function renderWhichNodeProps(form, propertiesToShow) {
+    propertiesToShow.forEach(key => {
+        if (state.whichNode[key] !== undefined) {
+            const fieldDiv = createAndAppend(form, 'div', 'node-field');
+            createAndAppend(fieldDiv, 'label', 'node-label', `${key}: `, { for: `input-${key}` });
+            const input = createAndAppend(fieldDiv, 'input', 'node-input', '', {
+                id: `input-${key}`,
+                value: state.whichNode[key],
+                name: key
+            });
 
-    console.log('createNodeModalDiv', state.createNode, state.showCreateNode)
+            input.addEventListener('change', (event) => {
+                state.whichNode[key] = event.target.value;
+            });
 
-    createNodeModalDiv.innerHTML = ''; // Clear existing content
-
-    if (state.createNode && Object.keys(state.createNode).length > 0) {
-        createAndAppend(createNodeModalDiv, 'h4', '', state.createNode.label || 'Node');
-
-        const form = createAndAppend(createNodeModalDiv, 'form', 'node-form');
-        const propertiesToShow = ['id', 'date'].concat(
-            Object.keys(state.createNode).filter(key => !['id', 'date', 'label'].includes(key))
-        );
-
-        propertiesToShow.forEach(key => {
-            if (state.createNode[key] !== undefined) {
-                const fieldDiv = createAndAppend(form, 'div', 'node-field');
-                createAndAppend(fieldDiv, 'label', 'node-label', `${key}: `, { for: `input-${key}` });
-                const input = createAndAppend(fieldDiv, 'input', 'node-input', '', {
-                    id: `input-${key}`,
-                    value: state.createNode[key],
-                    name: key
-                });
-
-                input.addEventListener('change', (event) => {
-                    state.createNode[key] = event.target.value;
-                });
-
-                // Check if the current property is 'date' and add a divider
-                if (key === 'date') {
-                    createAndAppend(form, 'hr', 'node-divider');
-                }
+            // Check if the current property is 'date' and add a divider
+            if (key === 'date') {
+                createAndAppend(form, 'hr', 'node-divider');
             }
-        });
-
-        const saveButton = document.createElement('button');
-        saveButton.type = 'button'; // Prevent form from submitting
-        saveButton.textContent = 'Update node in list';
-        saveButton.classList.add('save-button');
-        saveButton.addEventListener('click', () => demoUpdateNode(state.createNode));
-        form.appendChild(saveButton);
-    }
-    
-    if (state.showCreateNode) {
-        createNodeModalDiv.style.display = 'flex';
-    } else {
-        createNodeModalDiv.style.display = 'none';
-    }
-    
+        }
+    });
 }
 
 function updateWhichNodeDiv(whichNodeDiv) {
@@ -253,33 +215,23 @@ function updateWhichNodeDiv(whichNodeDiv) {
             Object.keys(state.whichNode).filter(key => !['id', 'date', 'label'].includes(key))
         );
 
-        propertiesToShow.forEach(key => {
-            if (state.whichNode[key] !== undefined) {
-                const fieldDiv = createAndAppend(form, 'div', 'node-field');
-                createAndAppend(fieldDiv, 'label', 'node-label', `${key}: `, { for: `input-${key}` });
-                const input = createAndAppend(fieldDiv, 'input', 'node-input', '', {
-                    id: `input-${key}`,
-                    value: state.whichNode[key],
-                    name: key
-                });
+        // render all the properties
+        renderWhichNodeProps(form, propertiesToShow)
 
-                input.addEventListener('change', (event) => {
-                    state.whichNode[key] = event.target.value;
-                });
-
-                // Check if the current property is 'date' and add a divider
-                if (key === 'date') {
-                    createAndAppend(form, 'hr', 'node-divider');
-                }
-            }
-        });
-
-        const saveButton = document.createElement('button');
-        saveButton.type = 'button'; // Prevent form from submitting
-        saveButton.textContent = 'Update node in list';
-        saveButton.classList.add('save-button');
-        saveButton.addEventListener('click', () => demoUpdateNode(state.whichNode));
-        form.appendChild(saveButton);
+        if (state.whichNodeMode) {
+            const saveButton = document.createElement('button');
+            saveButton.type = 'button'; // Prevent form from submitting
+            saveButton.classList.add('save-button');
+    
+            if (state.whichNodeMode === 'update') {
+                saveButton.addEventListener('click', () => demoUpdateNode(state.whichNode));
+                saveButton.textContent = 'Update Node';
+                } else if (state.whichNodeMode === 'create') {
+                saveButton.addEventListener('click', () => demoAddNode(state.whichNode));
+                saveButton.textContent = 'Create Node';
+            } 
+            form.appendChild(saveButton);
+        } 
 
     } else {
         const element = document.createElement('p')
@@ -357,9 +309,6 @@ function render() {
     
         labelsListElement.appendChild(listItem);
     });
-
-    // Update the Create Node Modal
-    updateCreateNodeModal(createNodeModalDiv)
 
     // Update the right-hand section based on state.whichNode
     updateWhichNodeDiv(whichNodeDiv)
