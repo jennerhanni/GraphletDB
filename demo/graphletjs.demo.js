@@ -2,6 +2,7 @@ const { aboutGraphletJS,
         initList,
         getRandomToken,
         getListOfLabels,
+        getListOfKeys,
         getNodeByKeyPair,
         initNode,
         addNode,
@@ -59,10 +60,15 @@ function demoGetListOfLabels(objOrIds) {
 }
 window.demoGetListOfLabels = demoGetListOfLabels
 
+function demoGetListOfKeys() {
+    console.log('demoGetListOfKeys')
+    state.listOfLabels = getListOfKeys(state.nodes);
+    render();
+}
+window.demoGetListOfKeys = demoGetListOfKeys
+
 function demoInitNode(label) {
-    console.log('demoInitNode', label)
     let newNode = initNode(state.nodes, label)
-    console.log('demoInitNode', label, newNode)
     demoSetWhichNode(newNode, 'create')
 }
 window.demoInitNode = demoInitNode
@@ -103,8 +109,9 @@ function demoAddNode(nodeToAdd) {
     console.log('demoAddNode', state.nodes, nodeToAdd)
     let res = addNode(state.nodes, nodeToAdd)
     if (res.msg === 'SUCCESS') {
-        state.nodes = res.data
-        state.whichNodeMode = 'update'
+        state.nodes = res.data;
+        state.listOfLabels = getListOfLabels(state.nodes, 'id');
+        state.whichNodeMode = 'update';
     }
     render();
 }

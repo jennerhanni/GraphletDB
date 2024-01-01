@@ -41,7 +41,7 @@ function getListOfLabels(nodes, objOrIds) {
     console.log('getListOfLabels', nodes, objOrIds)
     if (nodes && nodes.length > 0) {
         if (objOrIds === 'id') {
-            return nodes.filter(node => node.label === 'Label').map(node => node.label)
+            return nodes.filter(node => node.label === 'Label').map(node => node.strLabel)
         } else if (objOrIds === 'obj') {
             return nodes.filter(node => node.label === 'Label')
         } else {
@@ -52,6 +52,34 @@ function getListOfLabels(nodes, objOrIds) {
     }
 }
 window.getListOfLabels = getListOfLabels
+
+// return a list of all keys in a list of nodes
+function getListOfKeys(nodes) {
+    console.log('getListOfKeys');
+
+    const keySet = new Set();
+
+    // Add each key from each node to the set
+    nodes.forEach(node => {
+        Object.keys(node).forEach(key => {
+            keySet.add(key);
+        });
+    });
+
+    // Convert set to an array and sort alphabetically
+    let keys = Array.from(keySet).sort();
+
+    // Prioritize 'id', 'date', and 'label' if they exist in the keys
+    const priorityKeys = ['id', 'date', 'label'];
+    priorityKeys.reverse().forEach(key => {
+        if (keys.includes(key)) {
+            keys = [key, ...keys.filter(k => k !== key)];
+        }
+    });
+
+    return keys;
+}
+
 
 
 // calculates a formatted datetime string in the form YYYYMMDDHHmm
@@ -143,7 +171,7 @@ function addNode(nodes, nodeToAdd) {
                     msg: 'ERROR_STRLABEL_EXISTS'
                 }
             }
-        } 
+        }
 
         // todo: figure out the long-term fix to indicate uniqueness on certain props
         
@@ -212,6 +240,7 @@ module.exports = {
     aboutGraphletJS,
     getRandomToken,
     getListOfLabels,
+    getListOfKeys,
     getDateObjects,
 
     initList,
