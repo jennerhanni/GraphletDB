@@ -78,7 +78,7 @@ window.initList = initList;
 
 // init a node based on a label
 function initNode(nodes, label) {
-    let labelNode = nodes.find(node => node.label === 'Label' && node.strLabel === label);
+    let labelNode = Object.assign({}, nodes.find(node => node.label === 'Label' && node.strLabel === label));
     
     if (!labelNode) {
         labelNode = initLabelNode();
@@ -95,9 +95,9 @@ window.initNode = initNode
 // get a node from the list by keypair
 function getNodeByKeypair(nodes, key, value, boolFirstOnly) {
     if (boolFirstOnly) {
-        return [nodes.find(node => node[key] === value)]
+        return [Object.assign({}, nodes.find(node => node[key] === value))]
     } else {
-        return [nodes.filter(node => node[key] === value)]
+        return [Object.assign({}, nodes.filter(node => node[key] === value))]
     }
 }   
 window.getNodeByKeypair = getNodeByKeypair

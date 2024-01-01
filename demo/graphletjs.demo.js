@@ -79,8 +79,8 @@ function demoGetNodeById(val) {
 window.demoGetNodeById = demoGetNodeById
 
 function demoAddNode(node) {
-    console.log('demoAddNode', node)
-    
+    console.log('demoAddNode', node, state.nodes)
+    console.log(state.whichNode, state.nodes, state.whichNode === state.nodes[0], state.whichNode == state.nodes[0])
 }
 window.demoAddNode = demoAddNode
 
@@ -120,7 +120,6 @@ function updateWhichNodeDiv(whichNodeDiv) {
             }
         });
 
-        // Add a save button that calls demoAddNode()
         const saveButton = document.createElement('button');
         saveButton.type = 'button'; // Prevent form from submitting
         saveButton.textContent = 'Add node to list';
