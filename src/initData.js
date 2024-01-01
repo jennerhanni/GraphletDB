@@ -1,5 +1,5 @@
 const validMinimumList = [
-    {   id: 1, 
+    {   id: 'aaa', 
         label: 'Label', 
         date: '202312311822', 
         strLabel: 'Label',
@@ -7,18 +7,18 @@ const validMinimumList = [
 ];
 
 const validNodes = [
-    {   id: 1, 
+    {   id: 'aaa', 
         label: 'Label', 
         date: '202312311822', 
         strLabel: 'Label',
         strLabelDescription: 'The basic building block of the database.' },
-    {   id: 1, 
+    {   id: 'bbb', 
         label: 'Label', 
         date: '202312311828', 
         strLabel: 'Topic',
         strLabelDescription: 'A tag, keyword, topic, subject, person, place, etc by which other nodes can be linked.',
         strText: '' },
-    {   id: 1, 
+    {   id: 'ccc', 
         label: 'Topic', 
         date: '202312210727', 
         strText: 'History' 
