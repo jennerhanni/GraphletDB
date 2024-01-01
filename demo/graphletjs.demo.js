@@ -64,11 +64,19 @@ window.demoInitNode = demoInitNode
 
 function demoGetNodeByKeypair(key, value) {
     console.log('demoGetNodeByKeypair', key, value)
-    state.which_node = demoGetNodeByKeypair(state.nodes, key, value, true)
-    console.log(state.which_node)
+    state.whichNode = getNodeByKeypair(state.nodes, key, value, true)
+    console.log(state.whichNode)
     render();
 }
 window.demoGetNodeByKeypair = demoGetNodeByKeypair
+
+function demoGetNodeById(val) {
+    console.log('demoGetNodeById', val)
+    state.whichNode = getNodeByKeypair(state.nodes, 'id', val, true)[0]
+    console.log(state.whichNode)
+    render();
+}
+window.demoGetNodeById = demoGetNodeById
 
 function demoAddNode(node) {
     console.log('demoAddNode', node)
@@ -83,7 +91,7 @@ function updateWhichNodeDiv(whichNodeDiv) {
     console.log('whichNodeDiv', state.whichNode);
     whichNodeDiv.innerHTML = ''; // Clear existing content
 
-    if (Object.keys(state.whichNode).length > 0) {
+    if (state.whichNode && Object.keys(state.whichNode).length > 0) {
         createAndAppend(whichNodeDiv, 'h4', '', state.whichNode.label || 'Node');
 
         const propertiesToShow = ['id', 'date'].concat(
@@ -161,7 +169,6 @@ function render() {
         randomTokenParagraph.textContent = `${state.randomToken}`;
     }
 
-    
     // Update the list of labels
     state.listOfLabels.forEach(label => {
         const listItem = document.createElement('li');

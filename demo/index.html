@@ -12,6 +12,7 @@
             <button onclick="demoGetRandomToken(12)">get a random token</button>
             <button onclick="demoInitList()">init a list</button>
             <button onclick="demoGetListOfLabels('id')">get the list of labels</button> 
+            <button onclick="demoGetNodeById('aaa')">Get node with id 'aaa'</button>
         </div>
         <div class="left">
             <div class="aboutGraphletJS">
@@ -35,11 +36,19 @@
         </div>
         <div class="center">
             <p id="nodeCount">Your list has 0 items</p>
-            
             <ul id="nodesList"></ul>
-        
         </div>
         <div class="right">
+            <div class="getNodesById">
+                <div class="inside">
+                    <label>Find node by id</label>
+                    demoGetNodeById
+                    // dropdown menu of possible keys
+
+                    // results 
+                    <ul id="labelsList"></ul>   
+                </div>         
+            </div>
             <div id="whichNode"></div>
         </div>
     </div>
