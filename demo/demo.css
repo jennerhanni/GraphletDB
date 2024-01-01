@@ -105,3 +105,15 @@ ul {
 .labelListItem:hover {
     background-color: #66bb6a;
 }
+
+.node-field {
+    margin-bottom: 10px;
+}
+
+.node-label {
+    font-weight: bold;
+}
+
+.node-value {
+    /* Additional styling for the value */
+}

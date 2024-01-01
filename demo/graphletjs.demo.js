@@ -45,9 +45,11 @@ window.demoGetListOfLabels = demoGetListOfLabels
 function demoInitNode(label) {
     console.log('demoInitNode', label)
     let newNode = initNode(state.nodes, label)
-    console.log(newNode)
-    state.whichNode = newNode[0]
+    console.log('demoInitNode', label, newNode)
+    state.whichNode = newNode
+    render();
 }
+window.demoInitNode = demoInitNode
 
 function demoGetNodeByKeypair(key, value) {
     console.log('demoGetNodeByKeypair', key, value)
@@ -55,6 +57,7 @@ function demoGetNodeByKeypair(key, value) {
     console.log(state.which_node)
     render();
 }
+window.demoGetNodeByKeypair = demoGetNodeByKeypair
 
 function render() {
     const aboutGraphletJSParagraph = document.getElementById('aboutGraphletJS')
@@ -62,6 +65,7 @@ function render() {
     const labelsListElement = document.getElementById('labelsList');
     const countParagraph = document.getElementById('nodeCount');
     const randomTokenParagraph = document.getElementById('randomToken');
+    const whichNodeDiv = document.getElementById('whichNode')
 
     // Clear existing list items
     nodesListElement.innerHTML = '';
@@ -89,6 +93,7 @@ function render() {
         randomTokenParagraph.textContent = `${state.randomToken}`;
     }
 
+    
     // Update the list of labels
     state.listOfLabels.forEach(label => {
         const listItem = document.createElement('li');
@@ -109,4 +114,39 @@ function render() {
     
         labelsListElement.appendChild(listItem);
     });
+    
+    // Update the right-hand section based on state.whichNode
+    if (whichNodeDiv) {
+        console.log('whichNodeDiv', state.whichNode)
+        whichNodeDiv.innerHTML = '';  // Clear existing content
+
+        // Check if state.whichNode is not null or undefined
+        if (state.whichNode) {
+            
+            Object.keys(state.whichNode).forEach(key => {
+                // Create elements to display each property
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'node-field';
+
+                const label = document.createElement('span');
+                label.textContent = `${key}: `;
+                label.className = 'node-label';
+
+                const value = document.createElement('span');
+                value.textContent = state.whichNode[key];
+                value.className = 'node-value';
+
+                // Append label and value to fieldDiv
+                fieldDiv.appendChild(label);
+                fieldDiv.appendChild(value);
+
+                // Append fieldDiv to whichNodeDiv
+                whichNodeDiv.appendChild(fieldDiv);
+            });
+        } else {
+            console.log('fail')
+            whichNodeDiv.textContent = 'No active node selected';
+        }
+    }
+
 }
