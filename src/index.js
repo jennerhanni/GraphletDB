@@ -11,8 +11,7 @@ function aboutGraphletJS() {
         data: "GraphletJS v0.0.1",
         msg: "SUCCESS"
     }
-}
-window.aboutGraphletJS = aboutGraphletJS;
+}; window.aboutGraphletJS = aboutGraphletJS;
 
 
 // generate a random lowercase hexstring
@@ -35,27 +34,38 @@ function getRandomToken(nodes, len) {
         data: token,
         msg: "SUCCESS"
     }
-}
-window.getRandomToken = getRandomToken;
+}; window.getRandomToken = getRandomToken;
 
 
 // return a list of all labels
 // currently represented in the list of nodes
 function getListOfLabels(nodes, objOrIds) {
     console.log('getListOfLabels', nodes, objOrIds)
+
+    let nodesToReturn = []
+    let returnMessage = 'SUCCESS'
+
     if (nodes && nodes.length > 0) {
         if (objOrIds === 'id') {
-            return nodes.filter(node => node.label === 'Label').map(node => node.strLabel)
+            nodesToReturn = nodes.filter(node => node.label === 'Label').map(node => node.strLabel)
         } else if (objOrIds === 'obj') {
-            return nodes.filter(node => node.label === 'Label')
+            nodesToReturn = nodes.filter(node => node.label === 'Label')
         } else {
-            return []
+            nodesToReturn = []
+            returnMessage = 'ERROR_RETURN_TYPE_MUST_BE_OBJ_OR_ID'
         }
     } else {
-        return []
+        returnMessage = 'ERROR_RETURN_TYPE_MUST_BE_OBJ_OR_ID'
+        nodesToReturn = []
     }
-}
-window.getListOfLabels = getListOfLabels
+
+    return {
+        data: token,
+        msg: "SUCCESS"
+    }
+
+}; window.getListOfLabels = getListOfLabels
+
 
 // return a list of all keys in a list of nodes
 function getListOfKeys(nodes) {
@@ -82,8 +92,7 @@ function getListOfKeys(nodes) {
     });
 
     return keys;
-}
-
+}; window.getListOfKeys = getListOfKeys
 
 
 // calculates a formatted datetime string in the form YYYYMMDDHHmm
@@ -97,16 +106,28 @@ const getDateObjects = () => {
     const hour = String(now.getHours()).padStart(2, '0')
     const minute = String(now.getMinutes()).padStart(2, '0')
 
-    return `${year}${month}${day}${hour}${minute}`
-  }
+    let datestring = `${year}${month}${day}${hour}${minute}`
+    if (datestring) {    
+        return {
+            data: `${year}${month}${day}${hour}${minute}`,
+            msg: "SUCCESS"
+        }
+    } else {
+        return {
+            data: '',
+            msg: "ERROR_FAILED_TO_CREATE_DATESTRING"
+        }
+    }
+}; window.getDateObjects = getDateObjects
+
 
 /****************************** List & Node Handling *********************************/
 
 // init and return a new list with a single Label object
 function initList() {
     return [initLabelNode];
-}
-window.initList = initList;
+}; window.initList = initList;
+
 
 // init a node based on a label
 function initNode(nodes, label) {
@@ -117,15 +138,22 @@ function initNode(nodes, label) {
         labelNode.label = 'Label';
     }
 
-    labelNode.id = getRandomToken(nodes, 12);
-    labelNode.date = getDateObjects();
+    let tokenRes; do {
+        tokenRes = getRandomToken(nodes, 12);
+    } while (tokenRes.msg !== 'SUCCESS')
+    labelNode.id = tokenRes.data
+    
+    let dateRes; do {
+        dateRes = getDateObjects();
+    } while (dateRes.msg !== 'SUCCESS')
+    labelNode.date = dateRes.data
 
     console.log('initNode', labelNode)
     return labelNode;
-}
-window.initNode = initNode
+}; window.initNode = initNode
 
-// 
+
+// find all nodes by a set of keypairs and boolean and/or/not conditions
 function getNodeByKeyPairs(nodes, KeyPairList, boolFirstOnly) {
     console.log('getNodeByKeyPairs', KeyPairList, boolFirstOnly)
 
@@ -136,8 +164,8 @@ function getNodeByKeyPairs(nodes, KeyPairList, boolFirstOnly) {
     console.log(filteredNodes)
     // Return the first element if boolFirstOnly is true, otherwise return all matched elements
     return boolFirstOnly ? filteredNodes[0] : filteredNodes;
-}
-window.getNodeByKeyPairs = getNodeByKeyPairs
+}; window.getNodeByKeyPairs = getNodeByKeyPairs
+
 
 // get a node from the list by KeyPair
 function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
@@ -146,8 +174,8 @@ function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
     } else {
         return [Object.assign({}, nodes.filter(node => node[key] === value))]
     }
-}   
-window.getNodeByKeyPair = getNodeByKeyPair
+}; window.getNodeByKeyPair = getNodeByKeyPair
+
 
 // add a new node to the list
 function addNode(nodes, nodeToAdd) {
@@ -191,7 +219,8 @@ function addNode(nodes, nodeToAdd) {
             msg: 'SUCCESS'
         }
     }
-}
+}; window.addNode = addNode
+
 
 // removes a node from the list
 function removeNode(nodes, nodeToRemove) {
@@ -206,7 +235,8 @@ function removeNode(nodes, nodeToRemove) {
         data: nodes,
         msg: 'SUCCESS'
     }
-}
+}; window.removeNode = removeNode
+
 
 // update a node in the list
 function updateNode(nodes, nodeToUpdate) {
@@ -216,7 +246,9 @@ function updateNode(nodes, nodeToUpdate) {
     //       then look up the full target and propagate those changes. 
 
     return nodes.map(node => node.id === nodeToUpdate.id ? { ...node, ...nodeToUpdate } : node);
-}
+}; window.updateNode = updateNode
+
+
 /********************************** Validation ***************************************/
 
 // verify that all entries in the list are objects
@@ -226,7 +258,7 @@ function validateListContent(nodes) {
         data: isValid,
         msg: isValid ? 'Valid list content.' : 'Invalid list content. List must contain only node objects.'
     };
-}
+}; window.validateListContent = validateListContent
 
 // validate the list of nodes
 function validateList(nodes, doFix = false) {
@@ -236,7 +268,7 @@ function validateList(nodes, doFix = false) {
         return fixedNodes;
     }
     return nodes;
-}
+}; window.validateList = validateList
 
 
 
