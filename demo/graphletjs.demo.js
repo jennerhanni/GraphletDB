@@ -4,14 +4,16 @@ const { aboutGraphletJS,
         getListOfLabels,
         getNodeByKeyPair,
         initNode,
-        addNode } = require('../src/index');
+        addNode,
+        removeNode } = require('../src/index');
 
 let state = {
     nodes: [],
     randomToken: '',
     listOfLabels: [],
     aboutGraphletJS: '',
-    whichNode: {}
+    whichNode: {},
+    searchResults: [],
 };
 
 function demoClearAll() {
@@ -21,6 +23,7 @@ function demoClearAll() {
     state.listOfLabels = [];
     state.aboutGraphletJS = '';
     state.whichNode = {};
+    state.searchResults = [];
     render();
 }
 window.demoClearAll = demoClearAll
@@ -105,6 +108,20 @@ function demoAddNode(nodeToAdd) {
 }
 window.demoAddNode = demoAddNode
 
+function demoRemoveNode(nodeToRemove) {
+    console.log('demoRemoveNode', state.nodes, nodeToRemove)
+    let res = removeNode(state.nodes, nodeToRemove)
+    if (res.msg === 'SUCCESS') {
+        state.nodes = res.data
+        if (state.whichNode.id === nodeToRemove.id) {
+            state.whichNode = {}
+        }
+    }
+    console.log('res', res, state.nodes)
+    render();
+}
+window.demoRemoveNode = demoRemoveNode
+
 function demoSetWhichNode(nodeToSet) {
     state.whichNode = nodeToSet
     render();
@@ -116,28 +133,30 @@ function renderNodesList(nodesListElement) {
         const listItem = document.createElement('li');
         listItem.style.display = 'flex';
         listItem.style.justifyContent = 'space-between';
-        listItem.onclick = () => demoSetWhichNode(node);
     
         // Create and append label span
         const labelSpan = document.createElement('span');
         labelSpan.textContent = node['label'];
+        labelSpan.onclick = () => demoSetWhichNode(node);
         listItem.appendChild(labelSpan);
     
         // Create and append id span
         const idSpan = document.createElement('span');
         idSpan.textContent = node['id'];
+        idSpan.onclick = () => demoSetWhichNode(node);
         listItem.appendChild(idSpan);
     
         // Create and append date span
         const dateSpan = document.createElement('span');
         dateSpan.textContent = node['date'];
+        dateSpan.onclick = () => demoSetWhichNode(node);
         listItem.appendChild(dateSpan);
     
         // Create and append trash can icon
         const trashCan = document.createElement('span');
         trashCan.textContent = '🗑️';
         trashCan.style.cursor = 'pointer';
-        trashCan.onclick = () => demoRemoveNode(state.nodes, node);
+        trashCan.onclick = () => demoRemoveNode(node);
         listItem.appendChild(trashCan);
     
         // Append the list item to the nodes list

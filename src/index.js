@@ -143,7 +143,17 @@ function addNode(nodes, nodeToAdd) {
 
 // removes a node from the list
 function removeNode(nodes, nodeToRemove) {
-    return nodes.filter(node => node !== nodeToRemove);
+
+    // todo: if any rel-prefixed props exist,
+    //       look up the full target node based on the id
+    //       and remove this node's id from that node entirely
+
+    nodes = nodes.filter(node => node !== nodeToRemove)
+
+    return {
+        data: nodes,
+        msg: 'SUCCESS'
+    }
 }
 
 // update a node in the list
