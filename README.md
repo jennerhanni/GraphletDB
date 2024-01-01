@@ -179,7 +179,6 @@ let labelIds = getListOfLabels('id');
 console.log(labelIds);
 ```
 
-
 ## CRUD Node Handler Functions
 
 ### 🔧 initList()
@@ -200,6 +199,32 @@ If a Label node exists for that label, create and return a list containing the n
 If a Label node does not exist for that label, create the Label node, then create and return an array of both node 
 
 Return a single object of type Label, if that label exists.
+
+### 🔧 getNodeByKeypair(nodes, key, value, boolFirstOnly)
+
+This function retrieves one or more nodes from a list based on a specified key-value pair. If `boolFirstOnly` is true, the function returns the first node that matches the key-value pair. If false, it returns all nodes matching the key-value pair.
+
+Parameters:
+
+- `nodes` (Array): An array of objects, each representing a node.
+- `key` (String): The key to match within each node object.
+- `value` (Any): The value to match for the given key.
+- `boolFirstOnly` (Boolean): Determines whether to return only the first matching node (`true`) or all matching nodes (`false`).
+
+Returns an **array** containing the matching node(s). If `boolFirstOnly` is true, the array contains only the first matching node or is empty if no match is found. If `boolFirstOnly` is false, the array contains all nodes that match the key-value pair or is empty if no matches are found.
+
+```javascript
+let nodes = [
+    { id: 'node1', type: 'Label', data: {...} },
+    { id: 'node2', type: 'Label', data: {...} },
+];
+
+let firstLabelNode = getNodeByKeypair(nodes, 'type', 'Label', true);
+console.log(firstLabelNode);
+
+let allLabelNodes = getNodeByKeypair(nodes, 'type', 'Label', false);
+console.log(allLabelNodes);
+```
 
 ### 🔧 addNode(nodes, nodeToAdd)
 

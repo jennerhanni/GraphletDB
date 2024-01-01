@@ -57,7 +57,7 @@ function initList() {
 window.initList = initList;
 
 // init a node based on a label
-function initNode(nodes, label) {
+function initNode(nodes, labelStr) {
     let labelNode = nodes.find(node => node.label === 'Label' && node.properties.label === label);
     
     if (!labelNode) {
@@ -68,6 +68,17 @@ function initNode(nodes, label) {
     const newNode = { ...labelNode.properties }; // Create a new node based on the Label node properties
     return [newNode];
 }
+window.initNode = initNode
+
+// get a node from the list by keypair
+function getNodeByKeypair(nodes, key, value, boolFirstOnly) {
+    if (boolFirstOnly) {
+        return [nodes.find(node => node[key] === value)]
+    } else {
+        return [nodes.filter(node => node[key] === value)]
+    }
+}   
+window.getNodeByKeypair = getNodeByKeypair
 
 // add a new node to the list
 function addNode(nodes, nodeToAdd) {
@@ -111,12 +122,17 @@ module.exports = {
     aboutGraphlet,
     getRandomToken,
     getListOfLabels,
-    validateListContent,
+
     initList,
     initNode,
-    validateList,
+    getNodeByKeypair,
+    
     addNode,
     removeNode,
-    updateNode
+    updateNode,
+
+    validateListContent,
+    validateList,
+    
 };
 
