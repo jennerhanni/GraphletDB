@@ -1,9 +1,11 @@
 "use strict";
 
 // log the version string to the console
+// and attach the function to the window object
 function aboutGraphlet() {
     console.log("GraphletJS v0.0.1");
 }
+window.aboutGraphlet = aboutGraphlet;
 
 // verify that all entries in the list are objects
 function validateListContent(nodes) {
@@ -74,3 +76,4 @@ module.exports = {
     removeNode,
     updateNode
 };
+
