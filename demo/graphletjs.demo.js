@@ -72,6 +72,7 @@ window.demoGetNodeByKeypair = demoGetNodeByKeypair
 
 function demoAddNode(node) {
     console.log('demoAddNode', node)
+    
 }
 window.demoAddNode = demoAddNode
 
@@ -101,6 +102,14 @@ function updateWhichNodeDiv(whichNodeDiv) {
                 }
             }
         });
+
+        // Add a save button that calls demoAddNode()
+        const saveButton = document.createElement('button');
+        saveButton.textContent = 'Add node to list';
+        saveButton.classList.add('save-button');
+        saveButton.addEventListener('click', () => demoAddNode(state.whichNode));
+        whichNodeDiv.appendChild(saveButton);
+
     } else {
         const element = document.createElement('p')
         element.textContent = 'No active node selected';
