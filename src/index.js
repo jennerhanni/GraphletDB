@@ -33,6 +33,20 @@ function getRandomToken(nodes, len) {
 }
 window.getRandomToken = getRandomToken;
 
+// return a list of all labels
+function getListOfLabels(nodes, objOrIds) {
+    console.log('getListOfLabels', nodes, objOrIds)
+    if (nodes && nodes.length > 0) {
+        if (objOrIds === 'id') {
+            return nodes.filter(node => node.label === 'Label').map(node => node.label)
+        } else if (objOrIds === 'obj') {
+            return nodes.filter(node => node.label === 'Label')
+        } else {
+            return []
+        }
+    }
+}
+window.getListOfLabels = getListOfLabels
 
 /****************************** List & Node Handling *********************************/
 
@@ -53,11 +67,6 @@ function initNode(nodes, label) {
 
     const newNode = { ...labelNode.properties }; // Create a new node based on the Label node properties
     return [newNode];
-}
-
-// return a list of all labels
-function getListOfAllLabels(nodes) {
-    return nodes.filter(node => node.label === 'Label').map(node => node.properties.label);
 }
 
 // add a new node to the list
@@ -101,10 +110,10 @@ function validateList(nodes, doFix = false) {
 module.exports = {
     aboutGraphlet,
     getRandomToken,
+    getListOfLabels,
     validateListContent,
     initList,
     initNode,
-    getListOfAllLabels,
     validateList,
     addNode,
     removeNode,

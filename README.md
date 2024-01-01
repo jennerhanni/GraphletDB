@@ -106,12 +106,12 @@ Functions are separated into three areas:
 
 - [aboutGraphlet()](#-aboutgraphlet)
 - [getRandomToken(nodes, len)](#-getrandomtokennodes-len)
+- [getListOfLabels(nodes, objOrIds)](#-getlistoflabelsobjorids)
 
 **CRUD Node Handling**
 
 - [initList()](#-initlist)
 - initNode
-- getListOfAllLabels
 - addNode
 - updateNode
 - removeNode
@@ -153,17 +153,17 @@ let newToken = getRandomToken(nodes, tokenLength);
 console.log(newToken); // Outputs a unique 4-character hexadecimal string
 ```
 
-### 🔧 getListOfLabels(objOrIds)
+### 🔧 getListOfLabels(nodes, objOrIds)
 
 This helper function returns a list of all nodes with the label `Label`. If the `objOrIds` parameter is `obj`, the function returns a list of Label node objects. If the `objOrIds` parameter is `id`, the function returns a list of `id` strings.
 
 Parameters:
 
+- A `nodes` **array** of objects where each object represents a node. The function only cares that each node has an `id` property.
 - The `objOrIds` **string** determines the type of the returned list. Use `obj` to get a list of node objects, and `id` to get a list of `id` strings.
 
 Returns an **array** of either `id` strings or full node objects, depending on the `objOrIds` parameter value.
 
-**Usage Example**:
 ```javascript
 let nodes = [
     { id: 'node1', label: 'Label', data: {...} },
@@ -177,6 +177,7 @@ console.log(labelObjects);
 // Example 2: Get list of id strings
 let labelIds = getListOfLabels('id');
 console.log(labelIds);
+```
 
 
 ## CRUD Node Handler Functions
@@ -199,8 +200,6 @@ If a Label node exists for that label, create and return a list containing the n
 If a Label node does not exist for that label, create the Label node, then create and return an array of both node 
 
 Return a single object of type Label, if that label exists.
-
-### 🔧 getListOfAllLabels
 
 ### 🔧 addNode(nodes, nodeToAdd)
 

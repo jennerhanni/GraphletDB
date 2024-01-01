@@ -1,10 +1,12 @@
 const { aboutGraphlet,
         initList,
-        getRandomToken } = require('../src/index');
+        getRandomToken,
+        getListOfLabels } = require('../src/index');
 
 let state = {
     nodes: [],
-    randomToken: ''
+    randomToken: '',
+    listOfLabels: [],
 };
 
 function demoInitList() {
@@ -21,19 +23,28 @@ function demoGetRandomToken(len) {
 }
 window.demoGetRandomToken = demoGetRandomToken;
 
+function demoGetListOfLabels(objOrIds) {
+    console.log('demoGetListOfLabels', objOrIds)
+    state.listOfLabels = getListOfLabels(state.nodes, objOrIds);
+    render();
+}
+window.demoGetListOfLabels = demoGetListOfLabels
+
 function render() {
-    const listElement = document.getElementById('nodesList');
+    const nodesListElement = document.getElementById('nodesList');
+    const labelsListElement = document.getElementById('labelsList');
     const countParagraph = document.getElementById('nodeCount');
     const randomTokenParagraph = document.getElementById('randomToken');
 
     // Clear existing list items
-    listElement.innerHTML = '';
+    nodesListElement.innerHTML = '';
+    labelsListElement.innerHTML = '';
 
     // Create a new list item for each node and append it to the list
     state.nodes.forEach(node => {
         const listItem = document.createElement('li');
         listItem.textContent = node['id'];
-        listElement.appendChild(listItem);
+        nodesListElement.appendChild(listItem);
     });
 
     // Update the count paragraph
@@ -45,4 +56,11 @@ function render() {
     if (randomToken) {
         randomTokenParagraph.textContent = `Random token: ${state.randomToken}`;
     }
+
+    // Update the list of labels
+    state.listOfLabels.forEach(label => {
+        const listItem = document.createElement('li');
+        listItem.textContent = label;
+        labelsListElement.appendChild(listItem);
+    });
 }
