@@ -88,12 +88,20 @@ function render() {
     // Update the list of labels
     state.listOfLabels.forEach(label => {
         const listItem = document.createElement('li');
-        listItem.textContent = label;
+        listItem.classList.add('labelListItem');
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = label;
+        listItem.appendChild(textSpan);
+    
+        const emojiSpan = document.createElement('span');
+        emojiSpan.textContent = '➕'; 
+        listItem.appendChild(emojiSpan);
 
         listItem.onclick = function() {
             demoInitNode(listItem.textContent);
         };
-        
+    
         labelsListElement.appendChild(listItem);
     });
 }
