@@ -94,29 +94,39 @@ function updateWhichNodeDiv(whichNodeDiv) {
     if (state.whichNode && Object.keys(state.whichNode).length > 0) {
         createAndAppend(whichNodeDiv, 'h4', '', state.whichNode.label || 'Node');
 
+        const form = createAndAppend(whichNodeDiv, 'form', 'node-form');
         const propertiesToShow = ['id', 'date'].concat(
             Object.keys(state.whichNode).filter(key => !['id', 'date', 'label'].includes(key))
         );
 
         propertiesToShow.forEach(key => {
             if (state.whichNode[key] !== undefined) {
-                const fieldDiv = createAndAppend(whichNodeDiv, 'div', 'node-field');
-                createAndAppend(fieldDiv, 'span', 'node-label', `${key} `);
-                createAndAppend(fieldDiv, 'span', 'node-value', state.whichNode[key]);
+                const fieldDiv = createAndAppend(form, 'div', 'node-field');
+                createAndAppend(fieldDiv, 'label', 'node-label', `${key}: `, { for: `input-${key}` });
+                const input = createAndAppend(fieldDiv, 'input', 'node-input', '', {
+                    id: `input-${key}`,
+                    value: state.whichNode[key],
+                    name: key
+                });
+
+                input.addEventListener('change', (event) => {
+                    state.whichNode[key] = event.target.value;
+                });
 
                 // Check if the current property is 'date' and add a divider
                 if (key === 'date') {
-                    createAndAppend(whichNodeDiv, 'hr', 'node-divider');
+                    createAndAppend(form, 'hr', 'node-divider');
                 }
             }
         });
 
         // Add a save button that calls demoAddNode()
         const saveButton = document.createElement('button');
+        saveButton.type = 'button'; // Prevent form from submitting
         saveButton.textContent = 'Add node to list';
         saveButton.classList.add('save-button');
         saveButton.addEventListener('click', () => demoAddNode(state.whichNode));
-        whichNodeDiv.appendChild(saveButton);
+        form.appendChild(saveButton);
 
     } else {
         const element = document.createElement('p')
@@ -126,14 +136,22 @@ function updateWhichNodeDiv(whichNodeDiv) {
     }
 }
 
-// Helper function to create and append elements
-function createAndAppend(parent, elementType, className, text) {
+
+// Helper function to create and append elements with attributes
+function createAndAppend(parent, elementType, className, text, attributes = {}) {
     const element = document.createElement(elementType);
     if (className) element.className = className;
     if (text) element.textContent = text;
+
+    // Set attributes if provided
+    for (const key in attributes) {
+        element.setAttribute(key, attributes[key]);
+    }
+
     parent.appendChild(element);
     return element;
 }
+
 
 function render() {
     const aboutGraphletJSParagraph = document.getElementById('aboutGraphletJS')
