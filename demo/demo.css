@@ -83,6 +83,10 @@ body {
     background-color: lightgoldenrodyellow;
 }
 
+.keysList { 
+    background-color: lightpink;
+}
+
 .right { 
     background-color: lightblue; 
 }

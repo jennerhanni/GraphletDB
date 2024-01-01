@@ -13,6 +13,7 @@ let state = {
     nodes: [],
     randomToken: '',
     listOfLabels: [],
+    listOfKeys: [],
     aboutGraphletJS: '',
     whichNode: {},
     whichNodeMode: '', // valid options: 'create', 'edit', empty string
@@ -24,6 +25,7 @@ function demoClearAll() {
     state.nodes = []
     state.randomToken = '';
     state.listOfLabels = [];
+    state.listOfKeys = [];
     state.aboutGraphletJS = '';
     state.whichNode = {};
     state.searchResults = [];
@@ -49,6 +51,7 @@ function demoInitList() {
     state.nodes = initList();
     console.log('demoInitList', state.nodes);
     state.listOfLabels = getListOfLabels(state.nodes, 'id');
+    state.listOfKeys = getListOfKeys(state.nodes);
     render();
 }
 window.demoInitList = demoInitList;
@@ -62,7 +65,7 @@ window.demoGetListOfLabels = demoGetListOfLabels
 
 function demoGetListOfKeys() {
     console.log('demoGetListOfKeys')
-    state.listOfLabels = getListOfKeys(state.nodes);
+    state.listOfKeys = getListOfKeys(state.nodes);
     render();
 }
 window.demoGetListOfKeys = demoGetListOfKeys
@@ -269,6 +272,7 @@ function render() {
     const aboutGraphletJSParagraph = document.getElementById('aboutGraphletJS')
     const nodesListElement = document.getElementById('nodesList');
     const labelsListElement = document.getElementById('labelsList');
+    const keysListElement = document.getElementById('keysList');
     const countParagraph = document.getElementById('nodeCount');
     const randomTokenParagraph = document.getElementById('randomToken');
     const whichNodeDiv = document.getElementById('whichNode')
@@ -277,6 +281,7 @@ function render() {
     // Clear existing list items
     nodesListElement.innerHTML = '';
     labelsListElement.innerHTML = '';
+    keysListElement.innerHTML = '';
 
     // Create a new list item for each node and append it to the list
     renderNodesList(nodesListElement)
@@ -315,6 +320,22 @@ function render() {
         };
     
         labelsListElement.appendChild(listItem);
+    });
+
+    // Update the list of keys
+    state.listOfKeys.forEach(key => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('keyListItem');
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = key;
+        listItem.appendChild(textSpan);
+    
+        listItem.onclick = function() {
+            console.log('clicked', listItem.textContent)
+        };
+    
+        keysListElement.appendChild(listItem);
     });
 
     // Update the right-hand section based on state.whichNode
