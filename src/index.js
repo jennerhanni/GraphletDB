@@ -7,7 +7,10 @@ const { initLabelNode } = require('./initData.js');
 // and attach the function to the window object
 function aboutGraphletJS() {
     console.log("GraphletJS v0.0.1");
-    return "GraphletJS v0.0.1"
+    return {
+        data: "GraphletJS v0.0.1",
+        msg: "SUCCESS"
+    }
 }
 window.aboutGraphletJS = aboutGraphletJS;
 

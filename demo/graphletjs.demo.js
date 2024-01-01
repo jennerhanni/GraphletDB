@@ -35,7 +35,10 @@ window.demoClearAll = demoClearAll
 
 function demoAboutGraphletJS() {
     console.log('demoAboutGraphletJs')
-    state.aboutGraphletJS = aboutGraphletJS()
+    let res = aboutGraphletJS()
+    if (res.msg === 'SUCCESS') {
+        state.aboutGraphletJS = res.data
+    }
     render();
 }
 window.demoAboutGraphletJS = demoAboutGraphletJS;
