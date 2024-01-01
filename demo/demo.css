@@ -132,6 +132,7 @@ ul {
     justify-content: space-between;
     align-items: stretch;
     padding: 5px 10px;
+}
 
 .node-label {
     flex-basis: 25%;
@@ -150,6 +151,6 @@ ul {
     border: 0;
     height: 2px;
     background-color: darkblue;
-    margin: 0; 
+    margin: 5px 0; 
 }
 
