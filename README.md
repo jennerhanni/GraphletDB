@@ -185,11 +185,11 @@ console.log(labelIds);
 
 This function initializes returns a predefined minimal list that meets the GraphletJS schema. This can be used to set up or reset a list to a known default state that contains one Label object.
 
-Returns an **array** containing a single Label object. The structure and content of the Label object are determined by the `validMinimumList`.
+Returns an **array** containing a single Label object. The structure and content of the Label object are determined by the `initLabelNode`.
 
 ```javascript
 let newList = initList();
-console.log(newList); // Outputs the content of validMinimumList
+console.log(newList); // Outputs the content of initLabelNode
 ```
 
 ### 🔧 initNode(nodes, label)

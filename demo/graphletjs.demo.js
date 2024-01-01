@@ -9,7 +9,8 @@ let state = {
     nodes: [],
     randomToken: '',
     listOfLabels: [],
-    aboutGraphletJS: ''
+    aboutGraphletJS: '',
+    whichNode: {}
 };
 
 function demoAboutGraphletJS() {
@@ -19,6 +20,13 @@ function demoAboutGraphletJS() {
 }
 window.demoAboutGraphletJS = demoAboutGraphletJS;
 
+function demoGetRandomToken(len) {
+    state.randomToken = getRandomToken(state.nodes, len);
+    console.log(state.randomToken)
+    render();
+}
+window.demoGetRandomToken = demoGetRandomToken;
+
 function demoInitList() {
     state.nodes = initList();
     console.log('demoInitList', state.nodes);
@@ -26,13 +34,6 @@ function demoInitList() {
     render();
 }
 window.demoInitList = demoInitList;
-
-function demoGetRandomToken(len) {
-    state.randomToken = getRandomToken(state.nodes, len);
-    console.log(state.randomToken)
-    render();
-}
-window.demoGetRandomToken = demoGetRandomToken;
 
 function demoGetListOfLabels(objOrIds) {
     console.log('demoGetListOfLabels', objOrIds)
@@ -43,6 +44,9 @@ window.demoGetListOfLabels = demoGetListOfLabels
 
 function demoInitNode(label) {
     console.log('demoInitNode', label)
+    let newNode = initNode(state.nodes, label)
+    console.log(newNode)
+    state.whichNode = newNode[0]
 }
 
 function demoGetNodeByKeypair(key, value) {
@@ -99,7 +103,8 @@ function render() {
         listItem.appendChild(emojiSpan);
 
         listItem.onclick = function() {
-            demoInitNode(listItem.textContent);
+            console.log('clicked', listItem.textContent)
+            demoInitNode(textSpan.textContent);
         };
     
         labelsListElement.appendChild(listItem);

@@ -1,10 +1,10 @@
-const validMinimumList = [
-    {   id: 'aaa', 
-        label: 'Label', 
-        date: '202312311822', 
-        strLabel: 'Label',
-        strLabelDescription: 'The basic building block of the database.' },
-];
+const initLabelNode = {
+    id: 'aaa', 
+    label: 'Label', 
+    date: '202312311822', 
+    strLabel: 'Label',
+    strLabelDescription: 'The basic building block of the database.' 
+};
 
 const validNodes = [
     {   id: 'aaa', 
@@ -27,6 +27,6 @@ const validNodes = [
 window.validNodes = validNodes;
 
 module.exports = {
-    validMinimumList,
+    initLabelNode,
     validNodes,
 }

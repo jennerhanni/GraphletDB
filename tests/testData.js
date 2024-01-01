@@ -1,4 +1,4 @@
-const validMinimumList = [
+const initLabelNode = [
     {   id: 1, 
         label: 'Label', 
         date: '202312311822', 
@@ -26,6 +26,6 @@ const validNodes = [
 ];
 
 module.exports = {
-    validMinimumList,
+    initLabelNode,
     validNodes,
 }

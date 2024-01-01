@@ -1,5 +1,5 @@
 "use strict";
-const { validMinimumList } = require('./initData.js');
+const { initLabelNode } = require('./initData.js');
 
 /**************************************** Helpers ************************************/
 
@@ -34,7 +34,9 @@ function getRandomToken(nodes, len) {
 }
 window.getRandomToken = getRandomToken;
 
+
 // return a list of all labels
+// currently represented in the list of nodes
 function getListOfLabels(nodes, objOrIds) {
     console.log('getListOfLabels', nodes, objOrIds)
     if (nodes && nodes.length > 0) {
@@ -51,25 +53,42 @@ function getListOfLabels(nodes, objOrIds) {
 }
 window.getListOfLabels = getListOfLabels
 
+
+// calculates a formatted datetime string in the form YYYYMMDDHHmm
+const getDateObjects = () => {
+    console.log('getDateObjects')
+    const now = new Date()
+
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0') // months are 0-indexed 
+    const day = String(now.getDate()).padStart(2, '0')
+    const hour = String(now.getHours()).padStart(2, '0')
+    const minute = String(now.getMinutes()).padStart(2, '0')
+
+    return `${year}${month}${day}${hour}${minute}`
+  }
+
 /****************************** List & Node Handling *********************************/
 
 // init and return a new list with a single Label object
 function initList() {
-    return validMinimumList;
+    return [initLabelNode];
 }
 window.initList = initList;
 
 // init a node based on a label
-function initNode(nodes, labelStr) {
-    let labelNode = nodes.find(node => node.label === 'Label' && node.properties.label === label);
+function initNode(nodes, label) {
+    let labelNode = nodes.find(node => node.label === 'Label' && node.strLabel === label);
     
     if (!labelNode) {
-        labelNode = { label: 'Label', properties: { label: label } };
-        nodes.push(labelNode);
+        labelNode = initLabelNode();
+        labelNode.id = getRandomToken(nodes, 12);
+        labelNode.label = 'Label';
+        labelNode.date = getDateObjects();
     }
 
-    const newNode = { ...labelNode.properties }; // Create a new node based on the Label node properties
-    return [newNode];
+    console.log('initNode', labelNode)
+    return labelNode;
 }
 window.initNode = initNode
 
@@ -125,6 +144,7 @@ module.exports = {
     aboutGraphletJS,
     getRandomToken,
     getListOfLabels,
+    getDateObjects,
 
     initList,
     initNode,
