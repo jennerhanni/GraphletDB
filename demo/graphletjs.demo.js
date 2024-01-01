@@ -1,8 +1,10 @@
 const { aboutGraphlet,
-        initList } = require('../src/index');
+        initList,
+        getRandomToken } = require('../src/index');
 
 let state = {
-    nodes: []
+    nodes: [],
+    randomToken: ''
 };
 
 function demoInitList() {
@@ -12,9 +14,17 @@ function demoInitList() {
 }
 window.demoInitList = demoInitList;
 
+function demoGetRandomToken(len) {
+    state.randomToken = getRandomToken(state.nodes, len);
+    console.log(state.randomToken)
+    render();
+}
+window.demoGetRandomToken = demoGetRandomToken;
+
 function render() {
     const listElement = document.getElementById('nodesList');
     const countParagraph = document.getElementById('nodeCount');
+    const randomTokenParagraph = document.getElementById('randomToken');
 
     // Clear existing list items
     listElement.innerHTML = '';
@@ -29,5 +39,10 @@ function render() {
     // Update the count paragraph
     if (countParagraph) {
         countParagraph.textContent = `Your list has ${state.nodes.length} items`;
+    }
+
+    // Update the random token paragraph
+    if (randomToken) {
+        randomTokenParagraph.textContent = `Random token: ${state.randomToken}`;
     }
 }

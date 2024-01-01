@@ -92,27 +92,71 @@ const validNodes = [
 
 Functions are separated into three areas:
 
-1. CRUD Node Handling
-- initEmptyList
-- initList
+**Helpers**
+
+- [aboutGraphlet()](#-aboutgraphlet)
+- [getRandomToken(nodes, len)](#-getrandomtokennodes-len)
+
+**CRUD Node Handling**
+
+- [initList()](#-initlist)
 - initNode
 - getListOfAllLabels
 - addNode
 - updateNode
 - removeNode
 
-2. Database Validation
+**Validation**
+
 - validateList()
 
-3. Reference Management
+**Reference Management**
+
 - convertNodeToCslJson(nodes, nodeId)
 - convertNodeFromCslJson(nodes, nodeId)
 
-**initList()**
+## API: Helper Functions
 
-Return a new list containing one Label object. 
+### 🔧 aboutGraphlet()
 
-**initNode(nodes, label)**
+This function logs the current version of GraphletJS to the console. It's a utility function that can be used to verify the version of the GraphletJS library loaded in your project.
+
+```javascript
+aboutGraphlet();  // Outputs "GraphletJS v0.0.1"
+```
+
+### 🔧 getRandomToken(nodes, len)
+
+This function creates a random hexadecimal token of the length specified by `len`. It ensures the uniqueness of the token within the provided `nodes` array. Each node in the array is expected to have an `id` property, which is used to check for uniqueness. The function repeatedly generates new tokens until it finds one that is not already present in the `nodes` array.
+
+Parameters:
+
+- A `nodes` array of objects where each object represents a node. The function only cares that each node has an `id` property.
+- A `len` integer number of characters to generate in the hexadecimal string.
+
+Returns a unique lowercase hexadecimal **string** of the specified length.
+
+```javascript
+let nodes = [{ id: 'a1b2' }, { id: 'c3d4' }];
+let tokenLength = 4;
+let newToken = getRandomToken(nodes, tokenLength);
+console.log(newToken); // Outputs a unique 4-character hexadecimal string
+```
+
+## CRUD Node Handler Functions
+
+### 🔧 initList()
+
+This function initializes a list by returning a predefined list, `validMinimumList`, which contains a single Label object. This can be used to set up or reset a list to a known default state that contains minimal and valid data.
+
+Returns an **array** containing a single Label object. The structure and content of the Label object are determined by the `validMinimumList`.
+
+```javascript
+let newList = initList();
+console.log(newList); // Outputs the content of validMinimumList
+```
+
+### 🔧 initNode(nodes, label)
 
 If a Label node exists for that label, create and return a list containing the new node using the Label node as a template.
 
@@ -120,17 +164,25 @@ If a Label node does not exist for that label, create the Label node, then creat
 
 Return a single object of type Label, if that label exists.
 
-**getListOfAllLabels**
+### 🔧 getListOfAllLabels
 
-**validateList(nodes, doFix)**
+### 🔧 addNode(nodes, nodeToAdd)
+
+### 🔧 removeNode(nodes, nodeToRemove)
+
+### 🔧 updateNode(nodes, nodeToUpdate)
+
+## Validation Functions
+
+### 🔧 validateList(nodes, doFix)
 
 Optional: if doFix is true, return a fixed list. 
 
-**addNode(nodes, nodeToAdd)**
+## Reference Management Functions
 
-**removeNOde(nodes, nodeToRemove)**
+### 🔧 convertNodeToCslJson(nodes, nodeId)
 
-**updateNode(nodes, nodeToUpdate)**
+### 🔧 convertNodeFromCslJson(nodes, nodeId)
 
 ## License
 
