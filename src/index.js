@@ -163,7 +163,12 @@ function removeNode(nodes, nodeToRemove) {
 
 // update a node in the list
 function updateNode(nodes, nodeToUpdate) {
-    return nodes.map(node => node === nodeToUpdate ? { ...node, ...nodeToUpdate } : node);
+
+    // todo: compare each keypair before anda after, and if there are changes to 
+    //       any rel-prefixed props in this node, identify the types of changes,
+    //       then look up the full target and propagate those changes. 
+
+    return nodes.map(node => node.id === nodeToUpdate.id ? { ...node, ...nodeToUpdate } : node);
 }
 /********************************** Validation ***************************************/
 

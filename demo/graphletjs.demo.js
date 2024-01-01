@@ -5,6 +5,7 @@ const { aboutGraphletJS,
         getNodeByKeyPair,
         initNode,
         addNode,
+        updateNode,
         removeNode } = require('../src/index');
 
 let state = {
@@ -13,6 +14,7 @@ let state = {
     listOfLabels: [],
     aboutGraphletJS: '',
     whichNode: {},
+    createNode: {},
     searchResults: [],
 };
 
@@ -23,6 +25,7 @@ function demoClearAll() {
     state.listOfLabels = [];
     state.aboutGraphletJS = '';
     state.whichNode = {};
+    state.createNode = {};
     state.searchResults = [];
     render();
 }
@@ -61,7 +64,7 @@ function demoInitNode(label) {
     console.log('demoInitNode', label)
     let newNode = initNode(state.nodes, label)
     console.log('demoInitNode', label, newNode)
-    demoSetWhichNode(newNode)
+    demoSetCreateNode(newNode)
     render();
 }
 window.demoInitNode = demoInitNode
@@ -108,6 +111,16 @@ function demoAddNode(nodeToAdd) {
 }
 window.demoAddNode = demoAddNode
 
+function demoUpdateNode(nodeToUpdate) {
+    console.log('demoUpdateNode', state.nodes, nodeToUpdate)
+    let res = updateNode(state.nodes, nodeToUpdate)
+    if (res.msg === 'SUCCESS') {
+        state.nodes = res.data
+    }
+    render();
+}
+window.demoAddNode = demoAddNode
+
 function demoRemoveNode(nodeToRemove) {
     console.log('demoRemoveNode', state.nodes, nodeToRemove)
     let res = removeNode(state.nodes, nodeToRemove)
@@ -127,6 +140,12 @@ function demoSetWhichNode(nodeToSet) {
     render();
 }
 window.demoSetWhichNode = demoSetWhichNode
+
+function demoSetCreateNode(nodeToSet) {
+    state.createNode = nodeToSet
+    render();
+}
+window.demoSetCreateNode = demoSetCreateNode
 
 function renderNodesList(nodesListElement) {
     state.nodes.forEach(node => {
@@ -162,6 +181,19 @@ function renderNodesList(nodesListElement) {
         // Append the list item to the nodes list
         nodesListElement.appendChild(listItem);
     });   
+}
+
+function updateCreateNodeModal(createNodeModalDiv) {
+    if (!createNodeModalDiv) return;
+
+    console.log('createNodeModalDiv', state.createNode)
+
+    // Toggle the display of the modal
+    if (state.createNode) {
+        createNodeModalDiv.style.display = 'flex'; // Show the modal
+    } else {
+        createNodeModalDiv.style.display = 'none'; // Hide the modal
+    }
 }
 
 function updateWhichNodeDiv(whichNodeDiv) {
@@ -202,9 +234,9 @@ function updateWhichNodeDiv(whichNodeDiv) {
 
         const saveButton = document.createElement('button');
         saveButton.type = 'button'; // Prevent form from submitting
-        saveButton.textContent = 'Add node to list';
+        saveButton.textContent = 'Update node in list';
         saveButton.classList.add('save-button');
-        saveButton.addEventListener('click', () => demoAddNode(state.whichNode));
+        saveButton.addEventListener('click', () => demoUpdateNode(state.whichNode));
         form.appendChild(saveButton);
 
     } else {
@@ -239,6 +271,7 @@ function render() {
     const countParagraph = document.getElementById('nodeCount');
     const randomTokenParagraph = document.getElementById('randomToken');
     const whichNodeDiv = document.getElementById('whichNode')
+    const createNodeModalDiv = document.getElementById('createNodeModal')
 
     // Clear existing list items
     nodesListElement.innerHTML = '';
@@ -282,7 +315,9 @@ function render() {
     
         labelsListElement.appendChild(listItem);
     });
-    
+
+    // Update the Create Node Modal
+    updateCreateNodeModal(createNodeModalDiv)
 
     // Update the right-hand section based on state.whichNode
     updateWhichNodeDiv(whichNodeDiv)
