@@ -19,6 +19,16 @@ const { aboutGraphlet } = require('graphletjs');
 aboutGraphlet(); // This will log "GraphletJS v0.0.1" to the console
 ```
 
+## Demo
+
+To see the demo of GraphletJS in action, first clone the repository.
+
+```
+git clone https://github.com/jennerhanni/GraphletJS.git
+```
+
+In your web browser, open the `index.html` file located in the `demo` directory.
+
 ## GraphletJS Schema
 
 Where required, the `nodes` argument in each function should be a list that is the full database.
