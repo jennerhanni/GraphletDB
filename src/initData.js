@@ -24,6 +24,7 @@ const validNodes = [
         strText: 'History' 
     },
 ];
+window.validNodes = validNodes;
 
 module.exports = {
     validMinimumList,

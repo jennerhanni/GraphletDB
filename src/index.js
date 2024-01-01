@@ -1,4 +1,5 @@
 "use strict";
+const { validMinimumList } = require('./initData.js');
 
 // log the version string to the console
 // and attach the function to the window object
@@ -18,8 +19,9 @@ function validateListContent(nodes) {
 
 // init and return a new list with a single Label object
 function initList() {
-    return [{ label: 'Label', properties: {} }];
+    return validMinimumList;
 }
+window.initList = initList;
 
 // init a node based on a label
 function initNode(nodes, label) {

@@ -93,6 +93,7 @@ const validNodes = [
 Functions are separated into three areas:
 
 1. CRUD Node Handling
+- initEmptyList
 - initList
 - initNode
 - getListOfAllLabels
