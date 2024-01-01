@@ -27,7 +27,7 @@ To see the demo of GraphletJS in action, first clone the repository.
 git clone https://github.com/jennerhanni/GraphletJS.git
 ```
 
-In your web browser, open the `index.html` file located in the `demo` directory.
+Then, open the `index.html` file located in the `demo` directory in your web browser.
 
 ## GraphletJS Schema
 
@@ -129,7 +129,7 @@ Functions are separated into three areas:
 
 ### 🔧 aboutGraphlet()
 
-This function logs the current version of GraphletJS to the console. It's a utility function that can be used to verify the version of the GraphletJS library loaded in your project.
+This helper function logs the current version of GraphletJS to the console. 
 
 ```javascript
 aboutGraphlet();  // Outputs "GraphletJS v0.0.1"
@@ -137,12 +137,12 @@ aboutGraphlet();  // Outputs "GraphletJS v0.0.1"
 
 ### 🔧 getRandomToken(nodes, len)
 
-This function creates a random hexadecimal token of the length specified by `len`. It ensures the uniqueness of the token within the provided `nodes` array. Each node in the array is expected to have an `id` property, which is used to check for uniqueness. The function repeatedly generates new tokens until it finds one that is not already present in the `nodes` array.
+This helper function creates a random hexadecimal token of the length specified by `len`. It ensures the uniqueness of the token within the provided `nodes` array. Each node in the array is expected to have an `id` property, which is used to check for uniqueness. The function repeatedly generates new tokens until it finds one that is not already present in the `nodes` array.
 
 Parameters:
 
-- A `nodes` array of objects where each object represents a node. The function only cares that each node has an `id` property.
-- A `len` integer number of characters to generate in the hexadecimal string.
+- A `nodes` **array** of objects where each object represents a node. The function only cares that each node has an `id` property.
+- A `len` **integer** number of characters to generate in the hexadecimal string.
 
 Returns a unique lowercase hexadecimal **string** of the specified length.
 
@@ -157,7 +157,7 @@ console.log(newToken); // Outputs a unique 4-character hexadecimal string
 
 ### 🔧 initList()
 
-This function initializes a list by returning a predefined list, `validMinimumList`, which contains a single Label object. This can be used to set up or reset a list to a known default state that contains minimal and valid data.
+This function initializes returns a predefined minimal list that meets the GraphletJS schema. This can be used to set up or reset a list to a known default state that contains one Label object.
 
 Returns an **array** containing a single Label object. The structure and content of the Label object are determined by the `validMinimumList`.
 
