@@ -13,6 +13,17 @@ let state = {
     whichNode: {}
 };
 
+function demoClearAll() {
+    console.log('demoClearAll')
+    state.nodes = []
+    state.randomToken = '';
+    state.listOfLabels = [];
+    state.aboutGraphletJS = '';
+    state.whichNode = {};
+    render();
+}
+window.demoClearAll = demoClearAll
+
 function demoAboutGraphletJS() {
     console.log('demoAboutGraphletJs')
     state.aboutGraphletJS = aboutGraphletJS()
