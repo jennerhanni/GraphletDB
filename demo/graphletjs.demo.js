@@ -75,6 +75,49 @@ function demoAddNode(node) {
 }
 window.demoAddNode = demoAddNode
 
+function updateWhichNodeDiv(whichNodeDiv) {
+
+    if (!whichNodeDiv) return;
+
+    console.log('whichNodeDiv', state.whichNode);
+    whichNodeDiv.innerHTML = ''; // Clear existing content
+
+    if (Object.keys(state.whichNode).length > 0) {
+        createAndAppend(whichNodeDiv, 'h4', '', state.whichNode.label || 'Node');
+
+        const propertiesToShow = ['id', 'date'].concat(
+            Object.keys(state.whichNode).filter(key => !['id', 'date', 'label'].includes(key))
+        );
+
+        propertiesToShow.forEach(key => {
+            if (state.whichNode[key] !== undefined) {
+                const fieldDiv = createAndAppend(whichNodeDiv, 'div', 'node-field');
+                createAndAppend(fieldDiv, 'span', 'node-label', `${key} `);
+                createAndAppend(fieldDiv, 'span', 'node-value', state.whichNode[key]);
+
+                // Check if the current property is 'date' and add a divider
+                if (key === 'date') {
+                    createAndAppend(whichNodeDiv, 'hr', 'node-divider');
+                }
+            }
+        });
+    } else {
+        const element = document.createElement('p')
+        element.textContent = 'No active node selected';
+        element.classList.add('inside')
+        whichNodeDiv.appendChild(element)
+    }
+}
+
+// Helper function to create and append elements
+function createAndAppend(parent, elementType, className, text) {
+    const element = document.createElement(elementType);
+    if (className) element.className = className;
+    if (text) element.textContent = text;
+    parent.appendChild(element);
+    return element;
+}
+
 function render() {
     const aboutGraphletJSParagraph = document.getElementById('aboutGraphletJS')
     const nodesListElement = document.getElementById('nodesList');
@@ -132,43 +175,8 @@ function render() {
     });
     
 
-    // Helper function to create and append elements
-    function createAndAppend(parent, elementType, className, text) {
-        const element = document.createElement(elementType);
-        if (className) element.className = className;
-        if (text) element.textContent = text;
-        parent.appendChild(element);
-        return element;
-    }
-
     // Update the right-hand section based on state.whichNode
-    if (whichNodeDiv) {
-        console.log('whichNodeDiv', state.whichNode);
-        whichNodeDiv.innerHTML = ''; // Clear existing content
-
-        if (state.whichNode && Object.keys(state.whichNode).length > 0) {
-            createAndAppend(whichNodeDiv, 'h4', '', state.whichNode.label || 'Node');
-
-            const propertiesToShow = ['id', 'date'].concat(
-                Object.keys(state.whichNode).filter(key => !['id', 'date', 'label'].includes(key))
-            );
-
-            propertiesToShow.forEach(key => {
-                if (state.whichNode[key] !== undefined) {
-                    const fieldDiv = createAndAppend(whichNodeDiv, 'div', 'node-field');
-                    createAndAppend(fieldDiv, 'span', 'node-label', `${key} `);
-                    createAndAppend(fieldDiv, 'span', 'node-value', state.whichNode[key]);
-
-                    // Check if the current property is 'date' and add a divider
-                    if (key === 'date') {
-                        createAndAppend(whichNodeDiv, 'hr', 'node-divider');
-                    }
-                }
-            });
-        } else {
-            whichNodeDiv.textContent = 'No active node selected';
-            whichNodeDiv.classList.add('inside')
-        }
-    }
-
+    updateWhichNodeDiv(whichNodeDiv)
 }
+
+document.addEventListener('DOMContentLoaded', render);
