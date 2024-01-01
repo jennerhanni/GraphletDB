@@ -95,8 +95,16 @@ window.initNode = initNode
 // 
 function getNodeByKeyPairs(nodes, KeyPairList, boolFirstOnly) {
     console.log('getNodeByKeyPairs', KeyPairList, boolFirstOnly)
+
+    // Filter nodes based on the key-value pairs
+    let filteredNodes = nodes.filter(node => 
+        KeyPairList.every(pair => node[pair.key] === pair.value)
+    );
+    console.log(filteredNodes)
+    // Return the first element if boolFirstOnly is true, otherwise return all matched elements
+    return boolFirstOnly ? filteredNodes[0] : filteredNodes;
 }
-window.getNodeByKeyPairs
+window.getNodeByKeyPairs = getNodeByKeyPairs
 
 // get a node from the list by KeyPair
 function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
@@ -110,8 +118,27 @@ window.getNodeByKeyPair = getNodeByKeyPair
 
 // add a new node to the list
 function addNode(nodes, nodeToAdd) {
-    nodes.push(nodeToAdd);
-    return nodes;
+
+    let idExists = getNodeByKeyPair(nodes, 'id', nodeToAdd.id, true)[0]
+    console.log('id exists', idExists)
+    if (idExists && Object.keys(idExists).length > 0) {
+        return {
+            data: nodes,
+            msg: 'ID_EXISTS'
+        }
+    } else{
+        // todo: if any rel-prefixed props exist, 
+        //       look up the full target node based on the id
+        //       and add this node.id to the relNodes array in the targetNode
+
+        nodes.push(nodeToAdd)
+        console.log('nodes with added', nodes)
+
+        return {
+            data: nodes,
+            msg: 'SUCCESS'
+        }
+    }
 }
 
 // removes a node from the list

@@ -3,7 +3,8 @@ const { aboutGraphletJS,
         getRandomToken,
         getListOfLabels,
         getNodeByKeyPair,
-        initNode } = require('../src/index');
+        initNode,
+        addNode } = require('../src/index');
 
 let state = {
     nodes: [],
@@ -70,6 +71,20 @@ function demoGetNodeByKeyPair(key, value) {
 }
 window.demoGetNodeByKeyPair = demoGetNodeByKeyPair
 
+// todo: make this extensible
+// see 
+function demoGetNodeByKeyPairs() {
+    let keyPairList = [
+        { key: 'id', value: '123' },
+        { key: 'name', value: 'Node1' },
+        { key: 'id', value: 'aaa' }
+    ];
+
+    state.searchResults = getNodeByKeyPairs(state.nodes, keyPairList, false)
+    console.log('demoGetNodeByKeyPairs done', state.searchResults)
+}
+window.demoGetNodeByKeyPairs = demoGetNodeByKeyPairs
+
 function demoGetNodeById(val) {
     console.log('demoGetNodeById', val)
     state.whichNode = getNodeByKeyPair(state.nodes, 'id', val, true)[0]
@@ -78,9 +93,13 @@ function demoGetNodeById(val) {
 }
 window.demoGetNodeById = demoGetNodeById
 
-function demoAddNode(node) {
-    console.log('demoAddNode', node, state.nodes)
-    console.log(state.whichNode, state.nodes, state.whichNode === state.nodes[0], state.whichNode == state.nodes[0])
+function demoAddNode(nodeToAdd) {
+    console.log('demoAddNode', state.nodes, nodeToAdd)
+    let res = addNode(state.nodes, nodeToAdd)
+    if (res.msg === 'SUCCESS') {
+        state.nodes = res.data
+    }
+    render();
 }
 window.demoAddNode = demoAddNode
 
