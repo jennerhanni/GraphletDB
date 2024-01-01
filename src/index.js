@@ -125,15 +125,25 @@ function addNode(nodes, nodeToAdd) {
     if (idExists && Object.keys(idExists).length > 0) {
         return {
             data: nodes,
-            msg: 'ID_EXISTS'
+            msg: 'ERROR_ID_EXISTS'
         }
     } else if (nodeToAdd.id === '') {
         return {
             data: nodes,
-            msg: 'ID_CANNOT_BE_AN_EMPTY_STRING'
+            msg: 'ERROR_ID_CANNOT_BE_AN_EMPTY_STRING'
         }
     } else {
-        // todo: don't create a new Label node if strLabel already exists. 
+        // don't create a new Label node if strLabel already exists. 
+        if (nodeToAdd.label === 'Label') {
+            let strLabelExists = getNodeByKeyPair(nodes, 'strLabel', nodeToAdd.strLabel, true)[0]
+            if (strLabelExists && Object.keys(strLabelExists).length > 0) {
+                console.log('strlabel exists')
+                return {
+                    data: nodes,
+                    msg: 'ERROR_STRLABEL_EXISTS'
+                }
+            }
+        } 
 
         // todo: figure out the long-term fix to indicate uniqueness on certain props
         
