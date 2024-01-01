@@ -115,38 +115,46 @@ function render() {
         labelsListElement.appendChild(listItem);
     });
     
-    // Update the right-hand section based on state.whichNode
-    if (whichNodeDiv) {
-        console.log('whichNodeDiv', state.whichNode)
-        whichNodeDiv.innerHTML = '';  // Clear existing content
 
-        // Check if state.whichNode is not null or undefined
-        if (state.whichNode) {
-            
-            Object.keys(state.whichNode).forEach(key => {
-                // Create elements to display each property
-                const fieldDiv = document.createElement('div');
-                fieldDiv.className = 'node-field';
+    // Helper function to create and append elements
+function createAndAppend(parent, elementType, className, text) {
+    const element = document.createElement(elementType);
+    if (className) element.className = className;
+    if (text) element.textContent = text;
+    parent.appendChild(element);
+    return element;
+}
 
-                const label = document.createElement('span');
-                label.textContent = `${key}: `;
-                label.className = 'node-label';
+// Update the right-hand section based on state.whichNode
+if (whichNodeDiv) {
+    console.log('whichNodeDiv', state.whichNode);
+    whichNodeDiv.innerHTML = ''; // Clear existing content
 
-                const value = document.createElement('span');
-                value.textContent = state.whichNode[key];
-                value.className = 'node-value';
+    if (state.whichNode && Object.keys(state.whichNode).length > 0) {
+        createAndAppend(whichNodeDiv, 'h4', '', state.whichNode.label || 'Node');
 
-                // Append label and value to fieldDiv
-                fieldDiv.appendChild(label);
-                fieldDiv.appendChild(value);
+        const propertiesToShow = ['id', 'date'].concat(
+            Object.keys(state.whichNode).filter(key => !['id', 'date', 'label'].includes(key))
+        );
 
-                // Append fieldDiv to whichNodeDiv
-                whichNodeDiv.appendChild(fieldDiv);
-            });
-        } else {
-            console.log('fail')
-            whichNodeDiv.textContent = 'No active node selected';
-        }
+        propertiesToShow.forEach(key => {
+            if (state.whichNode[key] !== undefined) {
+                const fieldDiv = createAndAppend(whichNodeDiv, 'div', 'node-field');
+                createAndAppend(fieldDiv, 'span', 'node-label', `${key} `);
+                createAndAppend(fieldDiv, 'span', 'node-value', state.whichNode[key]);
+
+                // Check if the current property is 'date' and add a divider
+                if (key === 'date') {
+                    createAndAppend(whichNodeDiv, 'hr', 'node-divider');
+                }
+            }
+        });
+    } else {
+        whichNodeDiv.textContent = 'No active node selected';
+        whichNodeDiv.classList.add('inside')
     }
+}
+
+
 
 }

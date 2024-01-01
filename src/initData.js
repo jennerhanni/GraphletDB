@@ -3,7 +3,7 @@ const initLabelNode = {
     label: 'Label', 
     date: '202312311822', 
     strLabel: 'Label',
-    strLabelDescription: 'The basic building block of the database.' 
+    strLabelDesc: 'The basic building block of the database.' 
 };
 
 const validNodes = [
@@ -11,12 +11,12 @@ const validNodes = [
         label: 'Label', 
         date: '202312311822', 
         strLabel: 'Label',
-        strLabelDescription: 'The basic building block of the database.' },
+        strLabelDesc: 'The basic building block of the database.' },
     {   id: 'bbb', 
         label: 'Label', 
         date: '202312311828', 
         strLabel: 'Topic',
-        strLabelDescription: 'A tag, keyword, topic, subject, person, place, etc by which other nodes can be linked.',
+        strLabelDesc: 'A tag, keyword, topic, subject, person, place, etc by which other nodes can be linked.',
         strText: '' },
     {   id: 'ccc', 
         label: 'Topic', 
