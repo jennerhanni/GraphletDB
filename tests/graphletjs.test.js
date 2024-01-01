@@ -1,4 +1,4 @@
-const { aboutGraphlet } = require('../src/index');
+const { aboutGraphletJS } = require('../src/index');
 const { validNodes} = require('./testData.js');
 const fs = require('fs');
 
@@ -9,9 +9,9 @@ const writeToFile = (objToLog) => {
   });
 }
 
-test('aboutGraphlet logs the correct version', () => {
+test('aboutGraphletJS logs the correct version', () => {
   console.log = jest.fn();
-  aboutGraphlet();
+  aboutGraphletJS();
   expect(console.log).toHaveBeenCalledWith('GraphletJS v0.0.1');
 });
 

@@ -1,4 +1,4 @@
-const { aboutGraphlet,
+const { aboutGraphletJS,
         initList,
         getRandomToken,
         getListOfLabels,
@@ -8,11 +8,19 @@ let state = {
     nodes: [],
     randomToken: '',
     listOfLabels: [],
+    aboutGraphletJS: ''
 };
+
+function demoAboutGraphletJS() {
+    console.log('demoAboutGraphletJs')
+    state.aboutGraphletJS = aboutGraphletJS()
+    render();
+}
+window.demoAboutGraphletJS = demoAboutGraphletJS;
 
 function demoInitList() {
     state.nodes = initList();
-    console.log(state.nodes);
+    console.log('demoInitList', state.nodes);
     render();
 }
 window.demoInitList = demoInitList;
@@ -20,6 +28,7 @@ window.demoInitList = demoInitList;
 function demoGetRandomToken(len) {
     state.randomToken = getRandomToken(state.nodes, len);
     console.log(state.randomToken)
+    state.listOfLabels = getListOfLabels(state.nodes, 'id')
     render();
 }
 window.demoGetRandomToken = demoGetRandomToken;
@@ -39,6 +48,7 @@ function demoGetNodeByKeypair(key, value) {
 }
 
 function render() {
+    const aboutGraphletJSParagraph = document.getElementById('aboutGraphletJS')
     const nodesListElement = document.getElementById('nodesList');
     const labelsListElement = document.getElementById('labelsList');
     const whichNodeObjElement = document.getElementById('whichNodeObj');
@@ -59,6 +69,11 @@ function render() {
     // Update the count paragraph
     if (countParagraph) {
         countParagraph.textContent = `Your list has ${state.nodes.length} items`;
+    }
+
+    // Update aboutGraphletJSParagraph
+    if (aboutGraphletJSParagraph) {
+        aboutGraphletJSParagraph.textContent = `${state.aboutGraphletJS}`;
     }
 
     // Update the random token paragraph

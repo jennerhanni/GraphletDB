@@ -5,10 +5,11 @@ const { validMinimumList } = require('./initData.js');
 
 // log the version string to the console
 // and attach the function to the window object
-function aboutGraphlet() {
+function aboutGraphletJS() {
     console.log("GraphletJS v0.0.1");
+    return "GraphletJS v0.0.1"
 }
-window.aboutGraphlet = aboutGraphlet;
+window.aboutGraphletJS = aboutGraphletJS;
 
 
 // generate a random lowercase hexstring
@@ -119,7 +120,7 @@ function validateList(nodes, doFix = false) {
 
 
 module.exports = {
-    aboutGraphlet,
+    aboutGraphletJS,
     getRandomToken,
     getListOfLabels,
 

@@ -15,8 +15,8 @@ npm install --save graphletjs
 ## Usage
 
 ```
-const { aboutGraphlet } = require('graphletjs');
-aboutGraphlet(); // This will log "GraphletJS v0.0.1" to the console
+const { aboutGraphletJS } = require('graphletjs');
+aboutGraphletJS(); // This will log "GraphletJS v0.0.1" to the console
 ```
 
 ## Demo
@@ -104,7 +104,7 @@ Functions are separated into three areas:
 
 **Helpers**
 
-- [aboutGraphlet()](#-aboutgraphlet)
+- [aboutGraphletJS()](#-aboutGraphletJS)
 - [getRandomToken(nodes, len)](#-getrandomtokennodes-len)
 - [getListOfLabels(nodes, objOrIds)](#-getlistoflabelsobjorids)
 
@@ -127,12 +127,12 @@ Functions are separated into three areas:
 
 ## API: Helper Functions
 
-### 🔧 aboutGraphlet()
+### 🔧 aboutGraphletJS()
 
 This helper function logs the current version of GraphletJS to the console. 
 
 ```javascript
-aboutGraphlet();  // Outputs "GraphletJS v0.0.1"
+aboutGraphletJS();  // Outputs "GraphletJS v0.0.1"
 ```
 
 ### 🔧 getRandomToken(nodes, len)
