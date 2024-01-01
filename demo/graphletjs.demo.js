@@ -58,14 +58,14 @@ function demoInitNode(label) {
     console.log('demoInitNode', label)
     let newNode = initNode(state.nodes, label)
     console.log('demoInitNode', label, newNode)
-    state.whichNode = newNode
+    demoSetWhichNode(newNode)
     render();
 }
 window.demoInitNode = demoInitNode
 
 function demoGetNodeByKeyPair(key, value) {
     console.log('demoGetNodeByKeyPair', key, value)
-    state.whichNode = getNodeByKeyPair(state.nodes, key, value, true)
+    state.whichNode = demoSetWhichNode(getNodeByKeyPair(state.nodes, key, value, true)[0])
     console.log(state.whichNode)
     render();
 }
@@ -82,6 +82,8 @@ function demoGetNodeByKeyPairs() {
 
     state.searchResults = getNodeByKeyPairs(state.nodes, keyPairList, false)
     console.log('demoGetNodeByKeyPairs done', state.searchResults)
+
+    return searchResults
 }
 window.demoGetNodeByKeyPairs = demoGetNodeByKeyPairs
 
@@ -102,6 +104,46 @@ function demoAddNode(nodeToAdd) {
     render();
 }
 window.demoAddNode = demoAddNode
+
+function demoSetWhichNode(nodeToSet) {
+    state.whichNode = nodeToSet
+    render();
+}
+window.demoSetWhichNode = demoSetWhichNode
+
+function renderNodesList(nodesListElement) {
+    state.nodes.forEach(node => {
+        const listItem = document.createElement('li');
+        listItem.style.display = 'flex';
+        listItem.style.justifyContent = 'space-between';
+        listItem.onclick = () => demoSetWhichNode(node);
+    
+        // Create and append label span
+        const labelSpan = document.createElement('span');
+        labelSpan.textContent = node['label'];
+        listItem.appendChild(labelSpan);
+    
+        // Create and append id span
+        const idSpan = document.createElement('span');
+        idSpan.textContent = node['id'];
+        listItem.appendChild(idSpan);
+    
+        // Create and append date span
+        const dateSpan = document.createElement('span');
+        dateSpan.textContent = node['date'];
+        listItem.appendChild(dateSpan);
+    
+        // Create and append trash can icon
+        const trashCan = document.createElement('span');
+        trashCan.textContent = '🗑️';
+        trashCan.style.cursor = 'pointer';
+        trashCan.onclick = () => demoRemoveNode(state.nodes, node);
+        listItem.appendChild(trashCan);
+    
+        // Append the list item to the nodes list
+        nodesListElement.appendChild(listItem);
+    });   
+}
 
 function updateWhichNodeDiv(whichNodeDiv) {
 
@@ -184,12 +226,8 @@ function render() {
     labelsListElement.innerHTML = '';
 
     // Create a new list item for each node and append it to the list
-    state.nodes.forEach(node => {
-        const listItem = document.createElement('li');
-        listItem.textContent = node['id'];
-        nodesListElement.appendChild(listItem);
-    });
-
+    renderNodesList(nodesListElement)
+    
     // Update the count paragraph
     if (countParagraph) {
         countParagraph.textContent = `Your list has ${state.nodes.length} items`;

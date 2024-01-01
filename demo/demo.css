@@ -154,3 +154,33 @@ ul {
     margin: 5px 0; 
 }
 
+.nodesList {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 400px;
+    background-color: lightskyblue;
+}
+
+.nodesList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+
+.nodesList li span {
+    flex: 1; /* Makes each span take equal width */
+    text-align: center;
+}
+
+/* Style for the first column (label) */
+.nodesList li span:first-child {
+    text-align: left;
+}
+
+/* Style for the last column (trash can) */
+.nodesList li span:last-child {
+    text-align: right;
+}
