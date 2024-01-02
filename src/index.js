@@ -256,6 +256,17 @@ function addNode(nodes, nodeToAdd) {
 } window.addNode = addNode;
 
 
+// update a node in the list
+function updateNode(nodes, nodeToUpdate) {
+
+    // todo: compare each keypair before anda after, and if there are changes to 
+    //       any rel-prefixed props in this node, identify the types of changes,
+    //       then look up the full target and propagate those changes. 
+
+    return nodes.map(node => node.id === nodeToUpdate.id ? { ...node, ...nodeToUpdate } : node);
+} window.updateNode = updateNode;
+
+
 // removes a node from the list
 function removeNode(nodes, nodeToRemove) {
 
@@ -270,17 +281,6 @@ function removeNode(nodes, nodeToRemove) {
         msg: "SUCCESS"
     };
 } window.removeNode = removeNode;
-
-
-// update a node in the list
-function updateNode(nodes, nodeToUpdate) {
-
-    // todo: compare each keypair before anda after, and if there are changes to 
-    //       any rel-prefixed props in this node, identify the types of changes,
-    //       then look up the full target and propagate those changes. 
-
-    return nodes.map(node => node.id === nodeToUpdate.id ? { ...node, ...nodeToUpdate } : node);
-} window.updateNode = updateNode;
 
 
 /********************************** Validation ***************************************/
@@ -307,6 +307,19 @@ function validateList(nodes, doFix = false) {
 } window.validateList = validateList;
 
 
+/****************************** Reference Management *********************************/
+
+function convertNodeToCslJson(nodesToConvert) {
+    console.log("convertNodeToCslJson", nodesToConvert);
+}
+
+
+function convertNodeFromCslJson(nodesToConvert) {
+    console.log("convertNodeFromCslJson", nodesToConvert);
+}
+
+
+/********************************** EXPORTS ******************************************/
 
 module.exports = {
     aboutGraphletJS,
