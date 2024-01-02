@@ -308,6 +308,7 @@ function validateListContent(nodes) {
     };
 } window.validateListContent = validateListContent;
 
+
 // validate the list of nodes
 function validateList(nodes, doFix = false) {
     let fixedNodes = [];
@@ -323,11 +324,13 @@ function validateList(nodes, doFix = false) {
 
 /****************************** Reference Management *********************************/
 
+// convert a set of nodes in GraphletJS format to CSL JSON
 function convertNodeToCslJson(nodesToConvert) {
     console.log("convertNodeToCslJson", nodesToConvert);
 }
 
 
+// convert a set of nodes from CSL JSON to the GraphletJS format
 function convertNodeFromCslJson(nodesToConvert) {
     console.log("convertNodeFromCslJson", nodesToConvert);
 }
