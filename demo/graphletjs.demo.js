@@ -57,22 +57,36 @@ window.demoGetRandomToken = demoGetRandomToken;
 function demoInitList() {
     state.nodes = initList();
     console.log("demoInitList", state.nodes);
-    state.listOfLabels = getListOfLabels(state.nodes, "id");
-    state.listOfKeys = getListOfKeys(state.nodes);
+
+    let res = getListOfLabels(state.nodes, "id");
+    if (res.msg === "SUCCESS") {
+        state.listOfLabels = res.data;
+    }
+    
+    res = getListOfKeys(state.nodes);
+    if (res.msg === "SUCCESS") {
+        state.listOfKeys = res.data;
+    }
     render();
 }
 window.demoInitList = demoInitList;
 
 function demoGetListOfLabels(objOrIds) {
     console.log("demoGetListOfLabels", objOrIds);
-    state.listOfLabels = getListOfLabels(state.nodes, objOrIds);
+    let res = getListOfLabels(state.nodes, objOrIds);
+    if (res.msg === "SUCCESS") {
+        state.listOfLabels = res.data;
+    }
     render();
 }
 window.demoGetListOfLabels = demoGetListOfLabels;
 
 function demoGetListOfKeys() {
     console.log("demoGetListOfKeys");
-    state.listOfKeys = getListOfKeys(state.nodes);
+    let res = getListOfKeys(state.nodes);
+    if (res.msg === "SUCCESS") {
+        state.listOfKeys = res.data;
+    }
     render();
 }
 window.demoGetListOfKeys = demoGetListOfKeys;

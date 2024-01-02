@@ -42,25 +42,26 @@ function getRandomToken(nodes, len) {
 function getListOfLabels(nodes, objOrIds) {
     console.log("getListOfLabels", nodes, objOrIds);
 
-    let nodesToReturn = [];
+    let labelsToReturn = [];
     let returnMessage = "SUCCESS";
 
     if (nodes && nodes.length > 0) {
         if (objOrIds === "id") {
-            nodesToReturn = nodes.filter(node => node.label === "Label").map(node => node.strLabel);
+            labelsToReturn = nodes.filter(node => node.label === "Label").map(node => node.strLabel);
         } else if (objOrIds === "obj") {
-            nodesToReturn = nodes.filter(node => node.label === "Label");
+            labelsToReturn = nodes.filter(node => node.label === "Label");
         } else {
-            nodesToReturn = [];
+            labelsToReturn = [];
             returnMessage = "ERROR_RETURN_TYPE_MUST_BE_OBJ_OR_ID";
         }
     } else {
         returnMessage = "ERROR_RETURN_TYPE_MUST_BE_OBJ_OR_ID";
-        nodesToReturn = [];
+        labelsToReturn = [];
     }
 
+    console.log(labelsToReturn, returnMessage);
     return {
-        data: nodesToReturn,
+        data: labelsToReturn,
         msg: returnMessage
     };
 
@@ -91,7 +92,10 @@ function getListOfKeys(nodes) {
         }
     });
 
-    return keys;
+    return {
+        data: keys,
+        msg: "SUCCESS"
+    };
 } window.getListOfKeys = getListOfKeys;
 
 
