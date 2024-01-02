@@ -54,8 +54,19 @@ function demoGetRandomToken(len) {
 }
 window.demoGetRandomToken = demoGetRandomToken;
 
+function demoInitNode(label) {
+    let res = initNode(state.nodes, label);
+    if (res.msg === "SUCCESS") {
+        demoSetWhichNode(res.data, "create");
+    }    
+}
+window.demoInitNode = demoInitNode;
+
 function demoInitList() {
-    state.nodes = initList();
+    res = initList();
+    if (res.msg === "SUCCESS") {
+        state.nodes = res.data;
+    }
     console.log("demoInitList", state.nodes);
 
     let res = getListOfLabels(state.nodes, "id");
@@ -91,12 +102,6 @@ function demoGetListOfKeys() {
 }
 window.demoGetListOfKeys = demoGetListOfKeys;
 
-function demoInitNode(label) {
-    let newNode = initNode(state.nodes, label);
-    demoSetWhichNode(newNode, "create");
-}
-window.demoInitNode = demoInitNode;
-
 function demoGetNodeByKeyPair(key, value) {
     console.log("demoGetNodeByKeyPair", key, value);
     state.whichNode = demoSetWhichNode(getNodeByKeyPair(state.nodes, key, value, true)[0], "update");
@@ -106,7 +111,7 @@ function demoGetNodeByKeyPair(key, value) {
 window.demoGetNodeByKeyPair = demoGetNodeByKeyPair;
 
 // todo: make this extensible
-// see 
+// see search/sort/filer
 function demoGetNodeByKeyPairs() {
     let keyPairList = [
         { key: "id", value: "123" },

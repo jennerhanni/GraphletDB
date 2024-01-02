@@ -55,7 +55,7 @@ function getListOfLabels(nodes, objOrIds) {
             returnMessage = "ERROR_RETURN_TYPE_MUST_BE_OBJ_OR_ID";
         }
     } else {
-        returnMessage = "ERROR_RETURN_TYPE_MUST_BE_OBJ_OR_ID";
+        returnMessage = "ERROR_THE_NODES_LIST_IS_EMPTY";
         labelsToReturn = [];
     }
 
@@ -129,34 +129,55 @@ const getDateObjects = () => {
 
 // init and return a new list with a single Label object
 function initList() {
-    return [initLabelNode];
+    let newNode = Object.assign({}, initLabelNode);
+    let message = "SUCCESS";
+
+    if (newNode && Object.keys(newNode).length === 0) {
+        message = "ERROR_NODE_DOES_NOT_EXIST";
+    }
+
+    console.log("initList", newNode);
+    return {
+        data: [newNode],
+        msg: message
+    };
 } window.initList = initList;
 
 
 // init a node based on a label
 function initNode(nodes, label) {
-    let labelNode = Object.assign({}, nodes.find(node => node.label === "Label" && node.strLabel === label));
+    let newNode = Object.assign({}, nodes.find(node => node.label === "Label" && node.strLabel === label));
     
-    if (!labelNode) {
-        labelNode = initLabelNode();
-        labelNode.label = "Label";
+    if (!newNode) {
+        newNode = Object.assign({}, initLabelNode);
+        newNode.label = newNode.strLabel;
     }
 
     let tokenRes; do {
         tokenRes = getRandomToken(nodes, 12);
     } while (tokenRes.msg !== "SUCCESS");
-    labelNode.id = tokenRes.data;
+    newNode.id = tokenRes.data;
     
     let dateRes; do {
         dateRes = getDateObjects();
     } while (dateRes.msg !== "SUCCESS");
-    labelNode.date = dateRes.data;
+    newNode.date = dateRes.data;
 
-    console.log("initNode", labelNode);
-    return labelNode;
+    if (newNode.label !== "Label") {
+        delete newNode.strLabel;
+        delete newNode.strLabelDescription;
+        delete newNode.strCslType;
+    }
+
+    console.log("initNode", newNode);
+    return {
+        data: newNode,
+        msg: "SUCCESS"
+    };
 } window.initNode = initNode;
 
 
+// MAJOR REWRITE REQUIRED [search/sort/filter]
 // find all nodes by a set of keypairs and boolean and/or/not conditions
 function getNodeByKeyPairs(nodes, KeyPairList, boolFirstOnly) {
     console.log("getNodeByKeyPairs", KeyPairList, boolFirstOnly);
