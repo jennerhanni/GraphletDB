@@ -179,8 +179,12 @@ function initNode(nodes, label) {
 
 // MAJOR REWRITE REQUIRED [search/sort/filter]
 // find all nodes by a set of keypairs and boolean and/or/not conditions
-function getNodeByKeyPairs(nodes, keyPairList, boolFirstOnly) {
+function getNodeByKeyPairs(nodes, keyPairList, boolFirstOnly = false) {
     console.log("getNodeByKeyPairs", keyPairList, boolFirstOnly);
+
+    if (boolFirstOnly) {
+        boolFirstOnly = true;
+    }
 
     // Filter nodes based on the key-value pairs
     let filteredNodes = nodes.filter(node => 
@@ -197,15 +201,18 @@ function getNodeByKeyPairs(nodes, keyPairList, boolFirstOnly) {
 
 // get a node from the list by KeyPair
 function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
+    console.log("getNodeByKeyPair", nodes, key, value, boolFirstOnly);
     if (boolFirstOnly) {
+        let nodesToReturn = [Object.assign({}, nodes.find(node => node[key] === value))];
         return {
-            data: [Object.assign({}, nodes.find(node => node[key] === value))],
-            message: "SUCCESS"
+            data: nodesToReturn[0],
+            msg: "SUCCESS"
         };
     } else {
+        let nodesToReturn = [Object.assign({}, nodes.find(node => node[key] === value))];
         return {
-            data: [Object.assign({}, nodes.filter(node => node[key] === value))],
-            message: "SUCCESS"
+            data: nodesToReturn,
+            msg: "SUCCESS"
         };
     }
 } window.getNodeByKeyPair = getNodeByKeyPair;
@@ -286,14 +293,14 @@ function removeNode(nodes, nodeToRemove) {
 // add a property to a Label node
 // and propagate that change to every node of that label
 function addAPropertyToALabelNode(nodes, label, prop, propType, propDefaultVal) {
-    console.log('addAPropertyToALabelNode', nodes, label, prop, propType, propDefaultVal)
+    console.log("addAPropertyToALabelNode", nodes, label, prop, propType, propDefaultVal);
 }
 
 
 // remove a property from a Label node
 // and propagate that change to every node of that label
 function removeAPropertyFromALabelNode(nodes, label, prop) {
-    console.log('removeAPropertyFromALabelNode', nodes, label, prop)
+    console.log("removeAPropertyFromALabelNode", nodes, label, prop);
 }
 
 
@@ -325,14 +332,14 @@ function validateList(nodes, doFix = false) {
 /****************************** Reference Management *********************************/
 
 // convert a set of nodes in GraphletJS format to CSL JSON
-function convertNodeToCslJson(nodesToConvert) {
-    console.log("convertNodeToCslJson", nodesToConvert);
+function convertNodesToCslJson(nodesToConvert) {
+    console.log("convertNodesToCslJson", nodesToConvert);
 }
 
 
 // convert a set of nodes from CSL JSON to the GraphletJS format
-function convertNodeFromCslJson(nodesToConvert) {
-    console.log("convertNodeFromCslJson", nodesToConvert);
+function convertNodesFromCslJson(nodesToConvert) {
+    console.log("convertNodesFromCslJson", nodesToConvert);
 }
 
 
