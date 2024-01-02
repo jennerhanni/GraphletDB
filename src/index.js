@@ -132,7 +132,7 @@ function initList() {
     let newNode = Object.assign({}, initLabelNode);
     let message = "SUCCESS";
 
-    if (newNode && Object.keys(newNode).length === 0) {
+    if (!newNode || (newNode && Object.keys(newNode).length === 0)) {
         message = "ERROR_NODE_DOES_NOT_EXIST";
     }
 
@@ -148,7 +148,7 @@ function initList() {
 function initNode(nodes, label) {
     let newNode = Object.assign({}, nodes.find(node => node.label === "Label" && node.strLabel === label));
     
-    if (!newNode) {
+    if (!newNode || (newNode && Object.keys(newNode).length === 0)) {
         newNode = Object.assign({}, initLabelNode);
         newNode.label = newNode.strLabel;
     }
@@ -179,25 +179,34 @@ function initNode(nodes, label) {
 
 // MAJOR REWRITE REQUIRED [search/sort/filter]
 // find all nodes by a set of keypairs and boolean and/or/not conditions
-function getNodeByKeyPairs(nodes, KeyPairList, boolFirstOnly) {
-    console.log("getNodeByKeyPairs", KeyPairList, boolFirstOnly);
+function getNodeByKeyPairs(nodes, keyPairList, boolFirstOnly) {
+    console.log("getNodeByKeyPairs", keyPairList, boolFirstOnly);
 
     // Filter nodes based on the key-value pairs
     let filteredNodes = nodes.filter(node => 
-        KeyPairList.every(pair => node[pair.key] === pair.value)
+        keyPairList.every(pair => node[pair.key] === pair.value)
     );
     console.log(filteredNodes);
     // Return the first element if boolFirstOnly is true, otherwise return all matched elements
-    return boolFirstOnly ? filteredNodes[0] : filteredNodes;
+    return {
+        data: boolFirstOnly ? filteredNodes[0] : filteredNodes,
+        msg: "I_WOULDNT_TRUST_THIS_IF_I_WERE_YOU"
+    };
 } window.getNodeByKeyPairs = getNodeByKeyPairs;
 
 
 // get a node from the list by KeyPair
 function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
     if (boolFirstOnly) {
-        return [Object.assign({}, nodes.find(node => node[key] === value))];
+        return {
+            data: [Object.assign({}, nodes.find(node => node[key] === value))],
+            message: "SUCCESS"
+        };
     } else {
-        return [Object.assign({}, nodes.filter(node => node[key] === value))];
+        return {
+            data: [Object.assign({}, nodes.filter(node => node[key] === value))],
+            message: "SUCCESS"
+        };
     }
 } window.getNodeByKeyPair = getNodeByKeyPair;
 
@@ -309,6 +318,7 @@ module.exports = {
     initList,
     initNode,
     getNodeByKeyPair,
+    getNodeByKeyPairs,
     
     addNode,
     removeNode,

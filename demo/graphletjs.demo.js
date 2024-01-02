@@ -104,7 +104,10 @@ window.demoGetListOfKeys = demoGetListOfKeys;
 
 function demoGetNodeByKeyPair(key, value) {
     console.log("demoGetNodeByKeyPair", key, value);
-    state.whichNode = demoSetWhichNode(getNodeByKeyPair(state.nodes, key, value, true)[0], "update");
+    let res = demoSetWhichNode(getNodeByKeyPair(state.nodes, key, value, true)[0], "update");
+    if (res.msg === "SUCCESS") {
+        state.whichNode = res.data;
+    }
     console.log(state.whichNode);
     render();
 }
@@ -119,8 +122,11 @@ function demoGetNodeByKeyPairs() {
         { key: "id", value: "aaa" }
     ];
 
-    state.searchResults = getNodeByKeyPairs(state.nodes, keyPairList, false);
-    console.log("demoGetNodeByKeyPairs done", state.searchResults);
+    let res = getNodeByKeyPairs(state.nodes, keyPairList, false);
+    if (res.msg === "SUCCESS") {
+        state.searchResults = res.data;
+    }
+    render();
 }
 window.demoGetNodeByKeyPairs = demoGetNodeByKeyPairs;
 
