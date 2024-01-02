@@ -98,32 +98,31 @@ const validNodes = [
 ];
 ```
 
-## API Reference
+# API Reference
 
-Functions are separated into three areas:
-
-**Helpers**
-
-- [aboutGraphletJS()](#-aboutGraphletJS)
+## Helper Functions
+- [aboutGraphletJS()](#-aboutgraphletjs)
 - [getRandomToken(nodes, len)](#-getrandomtokennodes-len)
-- [getListOfLabels(nodes, objOrIds)](#-getlistoflabelsobjorids)
+- [getListOfLabels(nodes, objOrIds)](#-getlistoflabelsnodes-objorids)
+- [getListOfKeys(nodes)](#-getlistofkeysnodes)
+- [getDateObjects()](#-getdateobjects)
 
-**CRUD Node Handling**
-
+## CRUD Node Handling Functions
 - [initList()](#-initlist)
-- initNode
-- addNode
-- updateNode
-- removeNode
+- [initNode(nodes, label)](#-initnodenodes-label)
+- [getNodeByKeyPairs(nodes, keyPairList, boolFirstOnly)](#-getnodebykeypairsnodes-keypairlist-boolfirstonly)
+- [getNodeByKeyPair(nodes, key, value, boolFirstOnly)](#-getnodebykeypairnodes-key-value-boolfirstonly)
+- [addNode(nodes, nodeToAdd)](#-addnodenodes-nodeToAdd)
+- [updateNode(nodes, nodeToUpdate)](#-updatenodenodes-nodeToUpdate)
+- [removeNode(nodes, nodeToRemove)](#-removenodenodes-nodeToRemove)
 
-**Validation**
+## Validation Functions
+- [validateListContent(nodes)](#-validatelistcontentnodes)
+- [validateList(nodes, doFix)](#-validatelistnodes-dofix)
 
-- validateList()
-
-**Reference Management**
-
-- convertNodeToCslJson(nodes, nodeId)
-- convertNodeFromCslJson(nodes, nodeId)
+## Reference Management Functions
+- [convertNodesToCslJson(nodesToConvert)](#-convertnodestocsljsonnodestoconvert)
+- [convertNodesFromCslJson(nodesToConvert)](#-convertnodesfromcsljsonnodestoconvert)
 
 ## API: Helper Functions
 
