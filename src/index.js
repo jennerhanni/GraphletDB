@@ -283,6 +283,20 @@ function removeNode(nodes, nodeToRemove) {
 } window.removeNode = removeNode;
 
 
+// add a property to a Label node
+// and propagate that change to every node of that label
+function addAPropertyToALabelNode(nodes, label, prop, propType, propDefaultVal) {
+    console.log('addAPropertyToALabelNode', nodes, label, prop, propType, propDefaultVal)
+}
+
+
+// remove a property from a Label node
+// and propagate that change to every node of that label
+function removeAPropertyFromALabelNode(nodes, label, prop) {
+    console.log('removeAPropertyFromALabelNode', nodes, label, prop)
+}
+
+
 /********************************** Validation ***************************************/
 
 // verify that all entries in the list are objects
