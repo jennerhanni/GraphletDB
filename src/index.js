@@ -165,8 +165,9 @@ function initNode(nodes, label) {
     
     if (!newNode || (newNode && Object.keys(newNode).length === 0)) {
         newNode = Object.assign({}, initLabelNode);
-        newNode.label = newNode.strLabel;
     }
+    newNode.label = newNode.strLabel;
+    console.log('initNode', label, newNode)
 
     let tokenRes; do {
         tokenRes = getRandomToken(nodes, 12);
@@ -180,11 +181,11 @@ function initNode(nodes, label) {
 
     if (newNode.label !== "Label") {
         delete newNode.strLabel;
-        delete newNode.strLabelDescription;
+        delete newNode.strLabelDesc;
         delete newNode.strCslType;
     }
 
-    console.log("initNode", newNode);
+    console.log("initNodeEND", newNode);
     return {
         data: newNode,
         msg: "SUCCESS"
@@ -237,26 +238,22 @@ function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
 function addNode(nodes, nodeToAdd) {
 
     let boolIdExists = keyValExists(nodes, "id", nodeToAdd.id);
-
-    console.log("addNode() does id exist", nodes, nodeToAdd.id, boolIdExists);
     if (boolIdExists) {
-        console.log("whatwhatboolidexists = true")
         return {
             data: nodes,
             msg: "ERROR_ID_ALREADY_EXISTS_IN_THE_LIST"
         };
+
     } else if (nodeToAdd.id === "") {
-        console.log("case 2")
         return {
             data: nodes,
             msg: "ERROR_ID_CANNOT_BE_AN_EMPTY_STRING"
         };
+
     } else {
-        console.log("case 3")
         // don't create a new Label node if strLabel already exists. 
         if (nodeToAdd.label === "Label") {
             let boolStrLabelExists = keyValExists(nodes, "strLabel", nodeToAdd.strLabel);
-            console.log('boolStrLabelExists', boolStrLabelExists)
             if (boolStrLabelExists) {
                 return {
                     data: nodes,
@@ -264,16 +261,12 @@ function addNode(nodes, nodeToAdd) {
                 };
             }
         }
-        console.log("case 4")
 
-        // todo: figure out the long-term fix to indicate uniqueness on certain props
-        
         // todo: if any rel-prefixed props exist, 
         //       look up the full target node based on the id
         //       and add this node.id to the relNodes array in the targetNode
 
         nodes.push(nodeToAdd);
-        console.log("nodes with added", nodes);
 
         return {
             data: nodes,
