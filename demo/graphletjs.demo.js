@@ -1,6 +1,7 @@
 const { aboutGraphletJS,
     initList,
     getRandomToken,
+    keyValExists,
     getListOfLabels,
     getListOfKeys,
     getNodeByKeyPair,
@@ -142,7 +143,12 @@ function demoAddNode(nodeToAdd) {
     console.log('demoAddNode res', res)
     if (res.msg === "SUCCESS") {
         state.nodes = res.data;
-        state.listOfLabels = getListOfLabels(state.nodes, "id");
+        console.log('yup', getListOfLabels(state.nodes, "id"))
+        res = getListOfLabels(state.nodes, "id");
+        if (res.msg === "SUCCESS") {
+            state.listOfLabels = res.data
+        }
+        console.log('yup2', state.listOfLabels)
         state.whichNodeMode = "update";
     }
     render();
@@ -334,6 +340,7 @@ function render() {
         const listItem = document.createElement("li");
         listItem.classList.add("labelListItem");
 
+        console.log("testingtesting")
         const textSpan = document.createElement("span");
         textSpan.textContent = label;
         listItem.appendChild(textSpan);

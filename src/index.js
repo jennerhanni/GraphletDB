@@ -37,6 +37,21 @@ function getRandomToken(nodes, len) {
 } window.getRandomToken = getRandomToken;
 
 
+// returns true if a node with the given keypair exists
+// return false if a node with this keypair does not exist
+function keyValExists(nodes, key, val) {
+    console.log('keyValExists', nodes, key, val)
+
+    let res = getNodeByKeyPair(nodes, key, val, true)
+    console.log('keyValExists res of getNodeBYKeyPair', res.data, Object.keys(res.data).length > 0)
+    if (res.msg === "SUCCESS" && Object.keys(res.data).length > 0) {
+        return true
+    } else {
+        return false
+    }
+}
+
+
 // return a list of all labels
 // currently represented in the list of nodes
 function getListOfLabels(nodes, objOrIds) {
@@ -59,7 +74,7 @@ function getListOfLabels(nodes, objOrIds) {
         labelsToReturn = [];
     }
 
-    console.log(labelsToReturn, returnMessage);
+    console.log("getListOfLabels outbound", labelsToReturn, returnMessage);
     return {
         data: labelsToReturn,
         msg: returnMessage
@@ -221,18 +236,14 @@ function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
 // add a new node to the list
 function addNode(nodes, nodeToAdd) {
 
-    let idExists = false
-    let res = getNodeByKeyPair(nodes, "id", nodeToAdd.id, true);
-    if (res.msg === "SUCCESS") {
-        idExists = true
-    }
+    let boolIdExists = keyValExists(nodes, "id", nodeToAdd.id);
 
-    console.log("addNode() id exists", idExists);
-    if (idExists && Object.keys(idExists).length > 0) {
-        console.log("case 1")
+    console.log("addNode() does id exist", nodes, nodeToAdd.id, boolIdExists);
+    if (boolIdExists) {
+        console.log("whatwhatboolidexists = true")
         return {
             data: nodes,
-            msg: "ERROR_ID_EXISTS"
+            msg: "ERROR_ID_ALREADY_EXISTS_IN_THE_LIST"
         };
     } else if (nodeToAdd.id === "") {
         console.log("case 2")
@@ -244,14 +255,9 @@ function addNode(nodes, nodeToAdd) {
         console.log("case 3")
         // don't create a new Label node if strLabel already exists. 
         if (nodeToAdd.label === "Label") {
-            let strLabelExists = false
-            let res = getNodeByKeyPair(nodes, "strLabel", nodeToAdd.strLabel, true);
-            if (res.msg === "SUCCESS") {
-                strLabelExists = true
-            }
-            console.log("wtf", strLabelExists, Object.keys(strLabelExists))
-            if (strLabelExists) {
-                console.log("strlabel exists");
+            let boolStrLabelExists = keyValExists(nodes, "strLabel", nodeToAdd.strLabel);
+            console.log('boolStrLabelExists', boolStrLabelExists)
+            if (boolStrLabelExists) {
                 return {
                     data: nodes,
                     msg: "ERROR_STRLABEL_EXISTS"
@@ -362,6 +368,7 @@ function convertNodesFromCslJson(nodesToConvert) {
 module.exports = {
     aboutGraphletJS,
     getRandomToken,
+    keyValExists,
     getListOfLabels,
     getListOfKeys,
     getDateObjects,
