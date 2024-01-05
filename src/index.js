@@ -221,23 +221,36 @@ function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
 // add a new node to the list
 function addNode(nodes, nodeToAdd) {
 
-    let idExists = getNodeByKeyPair(nodes, "id", nodeToAdd.id, true)[0];
-    console.log("id exists", idExists);
+    let idExists = false
+    let res = getNodeByKeyPair(nodes, "id", nodeToAdd.id, true);
+    if (res.msg === "SUCCESS") {
+        idExists = true
+    }
+
+    console.log("addNode() id exists", idExists);
     if (idExists && Object.keys(idExists).length > 0) {
+        console.log("case 1")
         return {
             data: nodes,
             msg: "ERROR_ID_EXISTS"
         };
     } else if (nodeToAdd.id === "") {
+        console.log("case 2")
         return {
             data: nodes,
             msg: "ERROR_ID_CANNOT_BE_AN_EMPTY_STRING"
         };
     } else {
+        console.log("case 3")
         // don't create a new Label node if strLabel already exists. 
         if (nodeToAdd.label === "Label") {
-            let strLabelExists = getNodeByKeyPair(nodes, "strLabel", nodeToAdd.strLabel, true)[0];
-            if (strLabelExists && Object.keys(strLabelExists).length > 0) {
+            let strLabelExists = false
+            let res = getNodeByKeyPair(nodes, "strLabel", nodeToAdd.strLabel, true);
+            if (res.msg === "SUCCESS") {
+                strLabelExists = true
+            }
+            console.log("wtf", strLabelExists, Object.keys(strLabelExists))
+            if (strLabelExists) {
                 console.log("strlabel exists");
                 return {
                     data: nodes,
@@ -245,6 +258,7 @@ function addNode(nodes, nodeToAdd) {
                 };
             }
         }
+        console.log("case 4")
 
         // todo: figure out the long-term fix to indicate uniqueness on certain props
         

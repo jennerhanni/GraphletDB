@@ -138,7 +138,8 @@ window.demoGetNodeById = demoGetNodeById;
 
 function demoAddNode(nodeToAdd) {
     console.log("demoAddNode", state.nodes, nodeToAdd);
-    let res = addNode(state.nodes, nodeToAdd);
+    let res = addNode(state.nodes, nodeToAdd)
+    console.log('demoAddNode res', res)
     if (res.msg === "SUCCESS") {
         state.nodes = res.data;
         state.listOfLabels = getListOfLabels(state.nodes, "id");
