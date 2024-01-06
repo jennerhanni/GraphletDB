@@ -222,7 +222,47 @@ function renderNodesList(nodesListElement) {
     });   
 }
 
+
 function renderWhichNodeProps(form, propertiesToShow) {
+    console.log('renderWhichNodeProps')
+    propertiesToShow.forEach(key => {
+        if (state.whichNode[key] !== undefined) {
+            // Extract everything before the first capital letter as the prefix
+            const prefixMatch = key.match(/^[a-z]+/);
+            const prefix = prefixMatch ? prefixMatch[0] : null;
+
+            const fieldDiv = createAndAppend(form, "div", "node-field");
+            createAndAppend(fieldDiv, "label", "node-label", `${key}: `, { for: `input-${key}` });
+
+            if (prefix === "str") {
+                const input = createAndAppend(fieldDiv, "input", "node-input", "", {
+                    id: `input-${key}`,
+                    value: state.whichNode[key],
+                    name: key
+                });
+
+                input.addEventListener("change", (event) => {
+                    state.whichNode[key] = event.target.value;
+                });
+            } else if (prefix === "obj") {
+                createAndAppend(fieldDiv, "span", "node-object", "obj");
+            } else if (prefix === "rel") {
+                const relList = state.whichNode[key]; // Assuming this is an array of strings
+                relList.forEach(relItem => {
+                    createAndAppend(fieldDiv, "span", "relItem", relItem);
+                });
+            }
+
+            // Add divider for 'date'
+            if (key === "date") {
+                createAndAppend(form, "hr", "node-divider");
+            }
+        }
+    });
+}
+
+
+function XXrenderWhichNodeProps(form, propertiesToShow) {
     propertiesToShow.forEach(key => {
         if (state.whichNode[key] !== undefined) {
             const fieldDiv = createAndAppend(form, "div", "node-field");
