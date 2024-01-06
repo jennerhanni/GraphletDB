@@ -230,13 +230,16 @@ function renderWhichNodeProps(form, propertiesToShow) {
     console.log('renderWhichNodeProps')
     propertiesToShow.forEach(key => {
         if (state.whichNode[key] !== undefined) {
-            // Extract everything before the first capital letter as the prefix
+            // extract everything before the first capital letter as the prefix
             const prefixMatch = key.match(/^[a-z]+/);
             const prefix = prefixMatch ? prefixMatch[0] : null;
 
             const fieldDiv = createAndAppend(form, "div", "node-field");
+
+            // render the key
             createAndAppend(fieldDiv, "label", "node-label", `${key}: `, { for: `input-${key}` });
 
+            // render the value
             if (prefix === "str") {
                 const input = createAndAppend(fieldDiv, "input", "node-input", "", {
                     id: `input-${key}`,
@@ -268,31 +271,14 @@ function renderWhichNodeProps(form, propertiesToShow) {
             }
         }
     });
+
+    const fieldDiv = createAndAppend(form, "div", "node-field");
+    const addPropLabel = createAndAppend(fieldDiv, "label", "node-label", "➕ add a property");
+    addPropLabel.addEventListener("click", (event) => {
+        console.log('addPropLabel')
+    })
 }
 
-
-function XXrenderWhichNodeProps(form, propertiesToShow) {
-    propertiesToShow.forEach(key => {
-        if (state.whichNode[key] !== undefined) {
-            const fieldDiv = createAndAppend(form, "div", "node-field");
-            createAndAppend(fieldDiv, "label", "node-label", `${key}: `, { for: `input-${key}` });
-            const input = createAndAppend(fieldDiv, "input", "node-input", "", {
-                id: `input-${key}`,
-                value: state.whichNode[key],
-                name: key
-            });
-
-            input.addEventListener("change", (event) => {
-                state.whichNode[key] = event.target.value;
-            });
-
-            // Check if the current property is 'date' and add a divider
-            if (key === "date") {
-                createAndAppend(form, "hr", "node-divider");
-            }
-        }
-    });
-}
 
 function updateWhichNodeDiv(whichNodeDiv) {
 
