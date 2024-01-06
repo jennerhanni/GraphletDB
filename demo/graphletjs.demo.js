@@ -222,6 +222,9 @@ function renderNodesList(nodesListElement) {
     });   
 }
 
+function demoLog(str, key) {
+    console.log(str, key)
+}
 
 function renderWhichNodeProps(form, propertiesToShow) {
     console.log('renderWhichNodeProps')
@@ -246,11 +249,17 @@ function renderWhichNodeProps(form, propertiesToShow) {
                 });
             } else if (prefix === "obj") {
                 createAndAppend(fieldDiv, "span", "node-object", "obj");
+            } else if (prefix === "list") {
+                createAndAppend(fieldDiv, "span", "node-object", "list");
             } else if (prefix === "rel") {
                 const relList = state.whichNode[key]; // Assuming this is an array of strings
                 relList.forEach(relItem => {
-                    createAndAppend(fieldDiv, "span", "relItem", relItem);
+                    createAndAppend(fieldDiv, "span", "node-rel-item", relItem);
                 });
+
+                const plusEmoji = createAndAppend(fieldDiv, "span", "plus-emoji", "➕");
+                plusEmoji.onclick = () => demoLog('relNodes', key);
+                
             }
 
             // Add divider for 'date'
