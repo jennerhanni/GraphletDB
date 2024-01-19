@@ -2,9 +2,9 @@
 
 ## Introduction
 
-GraphletJS is a JavaScript library for managing property graph databases. The library expects to work with a flat list of objects called nodes, where each node has certain properties based on its label. 
+GraphletJS is a JavaScript library for managing a particular style of property graph database. The library expects to work with a flat list of objects called nodes, where each node has certain properties based on its type. The database file format is JSON-LD. 
 
-The library provides functions to add and remove nodes, update nodes in place, add and remove label-associated properties, create a new node of an existing label, and validate that a list meets the basic requirements of the GraphletJS schema.  
+This library provides functions to add and remove nodes, update nodes in place, add and remove label-associated properties, create a new node of an existing label, and validate that a list meets the basic requirements of the GraphletJS schema.  
 
 ## Installation
 
