@@ -114,6 +114,12 @@ function getListOfKeys(nodes) {
 } window.getListOfKeys = getListOfKeys;
 
 
+const getUnixTimestamp = () => {
+    const now = new Date();
+    const timestamp = Math.floor(now.getTime() / 1000);
+    return timestamp;
+};
+
 // calculates a formatted datetime string in the form YYYYMMDDHHmm
 const getDateObjects = () => {
     console.log("getDateObjects");
