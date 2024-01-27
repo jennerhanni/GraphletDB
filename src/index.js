@@ -12,6 +12,24 @@ function aboutGraphletJS() {
 }
 
 
+// return the working label from a contexted type node
+// - "archively:User" returns User
+function getTypeStr(fullTypeString) {
+    if (typeof fullTypeString !== "string") {
+        return {
+            data: "",
+            msg: "ERROR"
+        };
+    }
+
+    const parts = fullTypeString.split(":");
+    return {
+        msg: "SUCCESS",
+        data: parts.length > 1 ? parts[parts.length - 1] : fullTypeString
+    }
+}
+
+
 // generate a random lowercase hexstring
 // that is not already used as an id in nodes
 function getRandomToken(nodes, len) {    
@@ -25,9 +43,9 @@ function getRandomToken(nodes, len) {
         }
 
         // Check if token is unique
-        let res = boolFoundKeyVal(nodes, 'id', token)
-        if (res['msg'] === 'SUCCESS' && !res['data']) {
-            isUnique = !res['data']
+        let res = boolFoundKeyVal(nodes, "id", token)
+        if (res["msg"] === "SUCCESS" && !res["data"]) {
+            isUnique = !res["data"]
         }
     } while (!isUnique);
 
@@ -41,8 +59,8 @@ function getRandomToken(nodes, len) {
 // returns true if a node with the given keypair exists
 // return false if a node with this keypair does not exist
 function boolFoundKeyVal(nodes, key, value) {
-    if (!nodes["@graph"] || typeof nodes["@graph"] !== 'object') {
-        console.error('Invalid or missing @graph in nodes');
+    if (!nodes["@graph"] || typeof nodes["@graph"] !== "object") {
+        console.error("Invalid or missing @graph in nodes");
             return {
                 data: false,
                 msg: "ERROR: Invalid or missing @graph"
@@ -72,10 +90,10 @@ function boolFoundKeyVal(nodes, key, value) {
 
 
 function keyValExists(nodes, key, val) {
-    console.log('keyValExists', nodes, key, val)
+    console.log("keyValExists", nodes, key, val)
 
     let res = getNodeByKeyPair(nodes, key, val, true)
-    console.log('keyValExists res of getNodeBYKeyPair', res.data, Object.keys(res.data).length > 0)
+    console.log("keyValExists res of getNodeBYKeyPair", res.data, Object.keys(res.data).length > 0)
     if (res.msg === "SUCCESS" && Object.keys(res.data).length > 0) {
         return true
     } else {
@@ -88,11 +106,11 @@ function keyValExists(nodes, key, val) {
 function getTemplateObj(nodes, key, val) {
     try {
         return { 
-            data: nodes['templates'].find(n => n[key] === val) || null,
+            data: nodes["templates"].find(n => n[key] === val) || null,
             msg: "SUCCESS" 
         }
     } catch (e) {
-        console.log('getTemplateObj', key, val);
+        console.log("getTemplateObj", key, val);
         return { 
             data: e,
             msg: "ERROR_SEE_DATA" 
@@ -104,7 +122,7 @@ function getTemplateObj(nodes, key, val) {
 // return a list of all the type collection strings in @graph
 function getListOfTypeCollections(db) {
     try {
-        if (db["@graph"] && typeof db["@graph"] === 'object' && !Array.isArray(db["@graph"])) {
+        if (db["@graph"] && typeof db["@graph"] === "object" && !Array.isArray(db["@graph"])) {
             return { data: Object.keys(db["@graph"]),
                      msg: "SUCCESS" };
         } else {
@@ -112,7 +130,7 @@ function getListOfTypeCollections(db) {
                      msg: "SUCCESS" };
         }
     } catch (error) {
-        console.error('Error in getListOfTypeCollections:', error);
+        console.error("Error in getListOfTypeCollections:", error);
         return { data: [],
                  msg: "ERROR" };
     }
@@ -135,7 +153,7 @@ function getListOfKeys(nodes) {
     // Convert set to an array and sort alphabetically
     let keys = Array.from(keySet).sort();
 
-    // Prioritize 'id', 'date', and 'label' if they exist in the keys
+    // Prioritize "id", "date", and "label" if they exist in the keys
     const priorityKeys = ["id", "date", "label"];
     priorityKeys.reverse().forEach(key => {
         if (keys.includes(key)) {
@@ -199,6 +217,32 @@ function initList() {
     };
 }
 
+
+function initTypeCollection(nodes, typeStr) {
+    console.log('initTypeCollection')
+    let data = {}
+    let msg = "SUCCESS"
+
+    // grab the @type template based on nodeTypeStr and merge if the object exists
+    // otherwise return
+    let res = getTemplateObj(nodes, "@type", "gjs:TypeCollection");
+    console.log('initTypeCollection', res)
+    if (res["msg"] !== "SUCCESS") {
+        return { 
+            data: {},
+            msg: res["msg"]                 
+        }
+    } else {
+        nodes['@graph'][typeStr] = res['data']
+        return { 
+            data: nodes,
+            msg: res["msg"]
+        }
+    }
+
+    
+}
+
 function initNode(nodes, nodeTypeStr, strDateBlame) {
     // start with the core template object
     let data = {}
@@ -206,38 +250,38 @@ function initNode(nodes, nodeTypeStr, strDateBlame) {
 
     // grab the @type template based on nodeTypeStr and merge if the object exists
     // otherwise return
-    let res = getTemplateObj(nodes, '@type', 'archively:CoreTemplateObject');
-    if (res['msg'] !== 'SUCCESS') {
+    let res = getTemplateObj(nodes, "@type", "archively:CoreTemplateObject");
+    if (res["msg"] !== "SUCCESS") {
         return { 
             data: {},
-            msg: res['msg']                 
+            msg: res["msg"]                 
         }
     } else {
-        data = res['data']
+        data = res["data"]
     }
 
     // grab the @type template based on nodeTypeStr and merge if the object exists
     // otherwise return
-    res = getTemplateObj(nodes, '@type', nodeTypeStr);
-    if (res['msg'] !== 'SUCCESS') {
+    res = getTemplateObj(nodes, "@type", nodeTypeStr);
+    if (res["msg"] !== "SUCCESS") {
         return {
             data: {},
-            msg: res['msg']
+            msg: res["msg"]
         }
     } else {
-        data = { ...data, ...res['data'] }
+        data = { ...data, ...res["data"] }
     }
 
     // update the core props
     let tokenRes; do {
         tokenRes = getRandomToken(nodes, 12);
     } while (tokenRes.msg !== "SUCCESS");
-    data['gjs:@id'] = tokenRes.data;
+    data["gjs:@id"] = tokenRes.data;
     
     let dateRes; do {
         dateRes = getDateObjects();
     } while (dateRes.msg !== "SUCCESS");
-    data['gjs:@date'] = [dateRes.data+strDateBlame];
+    data["gjs:@date"] = [dateRes.data+strDateBlame];
 
     return { data, msg };
 }
@@ -283,9 +327,38 @@ function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
     }
 }
 
+// add a new node to @graph
+function addNode(nodes, nodeToAdd) {
+    console.log("addNode", nodeToAdd)
+    let res;
+
+    // identify the type 
+    res = getTypeStr(nodeToAdd['@type'])
+    if (res['msg'] !== 'SUCCESS') {
+        return {
+            data: [],
+            msg: res['msg']
+        }
+    }
+    let typeStr = res['data']
+    
+    // create the typecollection if it does not exist
+    res = getListOfTypeCollections(nodes)
+    if (res['msg'] !== 'SUCCESS') {
+        nodes = initTypeCollection(nodes, typeStr)
+    }
+    console.log('nodes', nodes['@graph'])
+
+    // handle bidirectionality if there are any rel-prefixed nodes
+
+    // add this node to the typecollection
+
+    // return the entirely new set of data
+    console.log(typeStr, res['data'])
+}
 
 // add a new node to the list
-function addNode(nodes, nodeToAdd) {
+function addNode2(nodes, nodeToAdd) {
 
     let boolIdExists = keyValExists(nodes, "id", nodeToAdd.id);
     if (boolIdExists) {
@@ -301,7 +374,7 @@ function addNode(nodes, nodeToAdd) {
         };
 
     } else {
-        // don't create a new Label node if strLabel already exists. 
+        // don"t create a new Label node if strLabel already exists. 
         if (nodeToAdd.label === "Label") {
             let boolStrLabelExists = keyValExists(nodes, "strLabel", nodeToAdd.strLabel);
             if (boolStrLabelExists) {
@@ -342,7 +415,7 @@ function removeNode(nodes, nodeToRemove) {
 
     // todo: if any rel-prefixed props exist,
     //       look up the full target node based on the id
-    //       and remove this node's id from that node entirely
+    //       and remove this node"s id from that node entirely
 
     nodes = nodes.filter(node => node !== nodeToRemove);
 
