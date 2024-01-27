@@ -1,17 +1,15 @@
 "use strict";
-const { initLabelNode } = require("./initData.js");
 
 /**************************************** Helpers ************************************/
 
 // log the version string to the console
-// and attach the function to the window object
 function aboutGraphletJS() {
     console.log("GraphletJS v0.0.1");
     return {
         data: "GraphletJS v0.0.1",
         msg: "SUCCESS"
     };
-} window.aboutGraphletJS = aboutGraphletJS;
+}
 
 
 // generate a random lowercase hexstring
@@ -34,7 +32,7 @@ function getRandomToken(nodes, len) {
         data: token,
         msg: "SUCCESS"
     };
-} window.getRandomToken = getRandomToken;
+}
 
 
 // returns true if a node with the given keypair exists
@@ -80,7 +78,7 @@ function getListOfLabels(nodes, objOrIds) {
         msg: returnMessage
     };
 
-} window.getListOfLabels = getListOfLabels;
+}
 
 
 // return a list of all keys in a list of nodes
@@ -111,7 +109,7 @@ function getListOfKeys(nodes) {
         data: keys,
         msg: "SUCCESS"
     };
-} window.getListOfKeys = getListOfKeys;
+}
 
 
 const getUnixTimestamp = () => {
@@ -143,7 +141,7 @@ const getDateObjects = () => {
             msg: "ERROR_FAILED_TO_CREATE_DATESTRING"
         };
     }
-}; window.getDateObjects = getDateObjects;
+}
 
 
 /****************************** List & Node Handling *********************************/
@@ -162,7 +160,7 @@ function initList() {
         data: [newNode],
         msg: message
     };
-} window.initList = initList;
+}
 
 
 // init a node based on a label
@@ -196,7 +194,7 @@ function initNode(nodes, label) {
         data: newNode,
         msg: "SUCCESS"
     };
-} window.initNode = initNode;
+}
 
 
 // MAJOR REWRITE REQUIRED [search/sort/filter]
@@ -218,7 +216,7 @@ function getNodeByKeyPairs(nodes, keyPairList, boolFirstOnly = false) {
         data: boolFirstOnly ? filteredNodes[0] : filteredNodes,
         msg: "I_WOULDNT_TRUST_THIS_IF_I_WERE_YOU"
     };
-} window.getNodeByKeyPairs = getNodeByKeyPairs;
+}
 
 
 // get a node from the list by KeyPair
@@ -237,7 +235,7 @@ function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
             msg: "SUCCESS"
         };
     }
-} window.getNodeByKeyPair = getNodeByKeyPair;
+}
 
 
 // add a new node to the list
@@ -279,7 +277,7 @@ function addNode(nodes, nodeToAdd) {
             msg: "SUCCESS"
         };
     }
-} window.addNode = addNode;
+}
 
 
 // update a node in the list
@@ -290,7 +288,7 @@ function updateNode(nodes, nodeToUpdate) {
     //       then look up the full target and propagate those changes. 
 
     return nodes.map(node => node.id === nodeToUpdate.id ? { ...node, ...nodeToUpdate } : node);
-} window.updateNode = updateNode;
+}
 
 
 // removes a node from the list
@@ -306,7 +304,7 @@ function removeNode(nodes, nodeToRemove) {
         data: nodes,
         msg: "SUCCESS"
     };
-} window.removeNode = removeNode;
+}
 
 
 // add a property to a Label node
@@ -332,7 +330,7 @@ function validateListContent(nodes) {
         data: isValid,
         msg: isValid ? "Valid list content." : "Invalid list content. List must contain only node objects."
     };
-} window.validateListContent = validateListContent;
+}
 
 
 // validate the list of nodes
@@ -345,7 +343,7 @@ function validateList(nodes, doFix = false) {
         return fixedNodes;
     }
     return nodes;
-} window.validateList = validateList;
+}
 
 
 /****************************** Reference Management *********************************/
