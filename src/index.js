@@ -50,34 +50,32 @@ function keyValExists(nodes, key, val) {
 }
 
 
-// return a list of all labels
-// currently represented in the list of nodes
-function getListOfLabels(nodes, objOrIds) {
-    console.log("getListOfLabels", nodes, objOrIds);
-
-    let labelsToReturn = [];
-    let returnMessage = "SUCCESS";
-
-    if (nodes && nodes.length > 0) {
-        if (objOrIds === "id") {
-            labelsToReturn = nodes.filter(node => node.label === "Label").map(node => node.strLabel);
-        } else if (objOrIds === "obj") {
-            labelsToReturn = nodes.filter(node => node.label === "Label");
-        } else {
-            labelsToReturn = [];
-            returnMessage = "ERROR_RETURN_TYPE_MUST_BE_OBJ_OR_ID";
-        }
-    } else {
-        returnMessage = "ERROR_THE_NODES_LIST_IS_EMPTY";
-        labelsToReturn = [];
+// get a template object out of the templates array
+function getTemplateObj(nodes, key, val) {
+    try {
+        return nodes['templates'].find(n => n[key] === val) || null;
+    } catch (e) {
+        console.log('getTemplateObj', key, val);
+        return e;
     }
+}
 
-    console.log("getListOfLabels outbound", labelsToReturn, returnMessage);
-    return {
-        data: labelsToReturn,
-        msg: returnMessage
-    };
 
+// return a list of all the type collection strings in @graph
+function getListOfTypeCollections(db) {
+    try {
+        if (db["@graph"] && typeof db["@graph"] === 'object' && !Array.isArray(db["@graph"])) {
+            return { data: Object.keys(db["@graph"]),
+                     msg: "SUCCESS" };
+        } else {
+            return { data: [],
+                     msg: "SUCCESS" };
+        }
+    } catch (error) {
+        console.error('Error in getListOfTypeCollections:', error);
+        return { data: [],
+                 msg: "ERROR" };
+    }
 }
 
 
@@ -365,8 +363,9 @@ function convertNodesFromCslJson(nodesToConvert) {
 module.exports = {
     aboutGraphletJS,
     getRandomToken,
+    getTemplateObj,
     keyValExists,
-    getListOfLabels,
+    getListOfTypeCollections,
     getListOfKeys,
     getDateObjects,
 
