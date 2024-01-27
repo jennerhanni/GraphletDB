@@ -160,9 +160,24 @@ function initList() {
     };
 }
 
+function initNode(nodes, nodeTypeStr) {
+    // start with the core template object
+    let data = getTemplateObj(nodes, '@type', 'archively:CoreTemplateObject')
+    let msg = "SUCCESS";
 
-// init a node based on a label
-function initNode(nodes, label) {
+    // grab the @type object based on nodeTypeStr and merge if the object exists
+    let additionalNode = getTemplateObj(nodes, '@type', nodeTypeStr);
+
+    if (additionalNode) {
+        data = { ...data, ...additionalNode };
+    } else {
+        msg = "FAILED: No additional node found for type " + nodeTypeStr;
+    }
+
+    return { data, msg };
+}
+
+function initNode2(nodes, nodeTypeStr) {
     let newNode = Object.assign({}, nodes.find(node => node.label === "Label" && node.strLabel === label));
     
     if (!newNode || (newNode && Object.keys(newNode).length === 0)) {
