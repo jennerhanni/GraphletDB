@@ -25,7 +25,11 @@ function getRandomToken(nodes, len) {
         }
 
         // Check if token is unique
-        isUnique = !nodes.some(node => node.id === token);
+        let res = boolFoundKeyVal(nodes, 'id', token)
+        if (res['msg'] === 'SUCCESS' && !res['data']) {
+            isUnique = !res['data']
+        }
+        console.log('isUnique', isUnique)
     } while (!isUnique);
 
     return {
@@ -37,6 +41,38 @@ function getRandomToken(nodes, len) {
 
 // returns true if a node with the given keypair exists
 // return false if a node with this keypair does not exist
+function boolFoundKeyVal(nodes, key, value) {
+    console.log('boolFoundKeyVal', key, value)
+    if (!nodes["@graph"] || typeof nodes["@graph"] !== 'object') {
+        console.error('Invalid or missing @graph in nodes');
+            return {
+                data: false,
+                msg: "ERROR: Invalid or missing @graph"
+            };
+    }
+
+    for (let typeCollectionKey in nodes["@graph"]) {
+        let typeCollection = nodes["@graph"][typeCollectionKey];
+        if (typeCollection["@type"] === "TypeCollection" && Array.isArray(typeCollection["gjs:entries"])) {
+            for (let entry of typeCollection["gjs:entries"]) {
+                if (entry[key] === value) {
+                    return {
+                        data: true,
+                        msg: "SUCCESS"
+                    };
+                }
+            }
+        }
+    }
+
+    return {
+        data: false,
+        msg: "SUCCESS"
+    };
+
+}
+
+
 function keyValExists(nodes, key, val) {
     console.log('keyValExists', nodes, key, val)
 
@@ -160,7 +196,7 @@ function initList() {
     };
 }
 
-function initNode(nodes, nodeTypeStr) {
+function initNode(nodes, nodeTypeStr, strDateBlame) {
     // start with the core template object
     let data = getTemplateObj(nodes, '@type', 'archively:CoreTemplateObject')
     let msg = "SUCCESS";
@@ -174,39 +210,18 @@ function initNode(nodes, nodeTypeStr) {
         msg = "FAILED: No additional node found for type " + nodeTypeStr;
     }
 
-    return { data, msg };
-}
-
-function initNode2(nodes, nodeTypeStr) {
-    let newNode = Object.assign({}, nodes.find(node => node.label === "Label" && node.strLabel === label));
-    
-    if (!newNode || (newNode && Object.keys(newNode).length === 0)) {
-        newNode = Object.assign({}, initLabelNode);
-    }
-    newNode.label = newNode.strLabel;
-    console.log('initNode', label, newNode)
-
+    // update the core props
     let tokenRes; do {
         tokenRes = getRandomToken(nodes, 12);
     } while (tokenRes.msg !== "SUCCESS");
-    newNode.id = tokenRes.data;
+    data['gjs:@id'] = tokenRes.data;
     
     let dateRes; do {
         dateRes = getDateObjects();
     } while (dateRes.msg !== "SUCCESS");
-    newNode.date = dateRes.data;
+    data['gjs:@date'] = [dateRes.data+strDateBlame];
 
-    if (newNode.label !== "Label") {
-        delete newNode.strLabel;
-        delete newNode.strLabelDesc;
-        delete newNode.strCslType;
-    }
-
-    console.log("initNodeEND", newNode);
-    return {
-        data: newNode,
-        msg: "SUCCESS"
-    };
+    return { data, msg };
 }
 
 
