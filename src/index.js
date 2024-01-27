@@ -29,7 +29,6 @@ function getRandomToken(nodes, len) {
         if (res['msg'] === 'SUCCESS' && !res['data']) {
             isUnique = !res['data']
         }
-        console.log('isUnique', isUnique)
     } while (!isUnique);
 
     return {
@@ -42,7 +41,6 @@ function getRandomToken(nodes, len) {
 // returns true if a node with the given keypair exists
 // return false if a node with this keypair does not exist
 function boolFoundKeyVal(nodes, key, value) {
-    console.log('boolFoundKeyVal', key, value)
     if (!nodes["@graph"] || typeof nodes["@graph"] !== 'object') {
         console.error('Invalid or missing @graph in nodes');
             return {
@@ -89,10 +87,16 @@ function keyValExists(nodes, key, val) {
 // get a template object out of the templates array
 function getTemplateObj(nodes, key, val) {
     try {
-        return nodes['templates'].find(n => n[key] === val) || null;
+        return { 
+            data: nodes['templates'].find(n => n[key] === val) || null,
+            msg: "SUCCESS" 
+        }
     } catch (e) {
         console.log('getTemplateObj', key, val);
-        return e;
+        return { 
+            data: e,
+            msg: "ERROR_SEE_DATA" 
+        }
     }
 }
 
@@ -154,7 +158,6 @@ const getUnixTimestamp = () => {
 
 // calculates a formatted datetime string in the form YYYYMMDDHHmm
 const getDateObjects = () => {
-    console.log("getDateObjects");
     const now = new Date();
 
     const year = now.getFullYear();
@@ -198,16 +201,31 @@ function initList() {
 
 function initNode(nodes, nodeTypeStr, strDateBlame) {
     // start with the core template object
-    let data = getTemplateObj(nodes, '@type', 'archively:CoreTemplateObject')
+    let data = {}
     let msg = "SUCCESS";
 
-    // grab the @type object based on nodeTypeStr and merge if the object exists
-    let additionalNode = getTemplateObj(nodes, '@type', nodeTypeStr);
-
-    if (additionalNode) {
-        data = { ...data, ...additionalNode };
+    // grab the @type template based on nodeTypeStr and merge if the object exists
+    // otherwise return
+    let res = getTemplateObj(nodes, '@type', 'archively:CoreTemplateObject');
+    if (res['msg'] !== 'SUCCESS') {
+        return { 
+            data: {},
+            msg: res['msg']                 
+        }
     } else {
-        msg = "FAILED: No additional node found for type " + nodeTypeStr;
+        data = res['data']
+    }
+
+    // grab the @type template based on nodeTypeStr and merge if the object exists
+    // otherwise return
+    res = getTemplateObj(nodes, '@type', nodeTypeStr);
+    if (res['msg'] !== 'SUCCESS') {
+        return {
+            data: {},
+            msg: res['msg']
+        }
+    } else {
+        data = { ...data, ...res['data'] }
     }
 
     // update the core props
