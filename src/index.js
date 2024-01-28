@@ -8,7 +8,7 @@ function aboutGraphletJS() {
 }
 
 
-// return the working label from a contexted type node
+// return the working label from a contexted node's type
 // - "archively:User" returns User
 function getTypeStr(fullTypeString) {
     try {
@@ -24,14 +24,13 @@ function getTypeStr(fullTypeString) {
     }
 }
 
-
+// this expects @graph
 // generate a random lowercase hexstring
-// that is not already used as an id in nodes
 function getRandomToken(nodes, len) {   
     let token;
     let isUnique;
     let count = 0;
-
+    
     do {
         token = "";
         for (let i = 0; i < len; i++) {
@@ -54,15 +53,11 @@ function getRandomToken(nodes, len) {
 }
 
 
+// this accepts not the whole dbJson but the subset of nodes to be examined
 // return a list of entries. if FIRSTONLY is true, 
 // return only the first node encountered.
 function listFoundKeyVal(nodes, key, value, firstOnly=false) {
     try {
-        // catch the obvious higher-level error cases
-        if (!nodes["@graph"] || typeof nodes["@graph"] !== "object") {
-            throw new Error("Invalid or missing @graph in nodes");
-        }
-
         // find any (firstOnly = true) or all (firstOnly = false) matching entries
         let entriesToReturn = [];
         for (let typeCollectionKey in nodes["@graph"]) {
@@ -89,9 +84,9 @@ function listFoundKeyVal(nodes, key, value, firstOnly=false) {
 
 
 // get a template object out of the templates array
-function getTemplateObj(nodes, key, val) {
+function getTemplateObj(templateNodes, key, val) {
     try {
-        return Object.assign({}, nodes["templates"].find(n => n[key] === val) || null)
+        return Object.assign({}, templateNodes.find(n => n[key] === val) || null)
     } catch (e) {
         console.log("getTemplateObj failed, template not found for key, val:", key, val);
         throw new Error('template object not found'); 
@@ -181,30 +176,16 @@ function hasRelProps(nodeToAdd) {
 
 /****************************** List & Node Handling *********************************/
 
-// init and return a new list with a single Label object
-function initList() {
-    let newNode = Object.assign({}, initLabelNode);
-    let message = "SUCCESS";
-
-    if (!newNode || (newNode && Object.keys(newNode).length === 0)) {
-        message = "ERROR_NODE_DOES_NOT_EXIST";
-    }
-
-    console.log("initList", newNode);
-    return [newNode]
-}
-
-
 // create a new type collection
 // add it to the @graph array
-function initTypeCollection(nodes, typeStr) {
+function initTypeCollection(dbJson, typeStr) {
     console.log('initTypeCollection', typeStr)
 
    try {
        // grab the @type template for the core template
-       let newTypeCollection = getTemplateObj(nodes, "@type", "gjs:TypeCollection");
+       let newTypeCollection = getTemplateObj(dbJson['templates'], "@type", "gjs:TypeCollection");
        newTypeCollection['gjs:typeName'] = typeStr;
-       nodes['@graph'][typeStr] = newTypeCollection;
+       dbJson['@graph'][typeStr] = newTypeCollection;
     } catch (err) {
         console.error(err);
     }    
@@ -213,19 +194,19 @@ function initTypeCollection(nodes, typeStr) {
 
 // create a new node from a type
 // also supports an optional user slug to override in the updated date
-function initNode(nodes, nodeTypeStr, strUserSlug='default') {
+function initNode(dbJson, nodeTypeStr, strUserSlug='default') {
 
     try {    
         // grab the @type template for the core template
-        let newNode = getTemplateObj(nodes, "@type", "archively:CoreTemplateObject"); 
+        let newNode = getTemplateObj(dbJson['templates'], "@type", "archively:CoreTemplateObject"); 
 
         // grab the @type template based on nodeTypeStr 
         // and merge if the object exists
-        let tObj = getTemplateObj(nodes, '@type', nodeTypeStr);
+        let tObj = getTemplateObj(dbJson['templates'], '@type', nodeTypeStr);
         newNode = { ...newNode, ...tObj }
 
         // update core props
-        newNode["gjs:@id"] = getRandomToken(nodes, 12);
+        newNode["gjs:@id"] = getRandomToken(dbJson['@graph'], 12);
         newNode["gjs:@date"] = [getDateObjects()+strUserSlug];
     
         return newNode
@@ -236,53 +217,8 @@ function initNode(nodes, nodeTypeStr, strUserSlug='default') {
 }
 
 
-// MAJOR REWRITE REQUIRED [search/sort/filter]
-// find all nodes by a set of keypairs and boolean and/or/not conditions
-function getNodeByKeyPairs(nodes, keyPairList, boolFirstOnly = false) {
-    console.log("getNodeByKeyPairs", keyPairList, boolFirstOnly);
-
-    if (boolFirstOnly) {
-        boolFirstOnly = true;
-    }
-
-    // Filter nodes based on the key-value pairs
-    let filteredNodes = nodes.filter(node => 
-        keyPairList.every(pair => node[pair.key] === pair.value)
-    );
-    console.log(filteredNodes);
-    // Return the first element if boolFirstOnly is true, otherwise return all matched elements
-    return {
-        data: boolFirstOnly ? filteredNodes[0] : filteredNodes,
-        msg: "I_WOULDNT_TRUST_THIS_IF_I_WERE_YOU"
-    };
-}
-
-
-// get a node from the list by KeyPair
-function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
-    try {
-        console.log("getNodeByKeyPair", nodes, key, value, boolFirstOnly);
-        let nodeFound = nodes.find(node => node[key] === value);
-
-        if (!nodeFound) {
-            throw new Error("Node not found");
-        }
-
-        if (boolFirstOnly) {
-            return Object.assign({}, nodeFound);
-        } else {
-            let nodesToReturn = nodes.filter(node => node[key] === value).map(node => Object.assign({}, node));
-            return nodesToReturn;
-        }
-    } catch (err) {
-        console.error(err.message);
-        throw err;
-    }
-}
-
-
 // add a new node to @graph
-function addNode(nodes, nodeToAdd) {
+function addNode(dbJson, nodeToAdd) {
     console.log("addNode", nodeToAdd)
 
     nodeToAdd = Object.assign({}, nodeToAdd)
@@ -292,11 +228,12 @@ function addNode(nodes, nodeToAdd) {
         console.log('addNode typeStr', nodeToAdd, typeStr)
 
         // create the typecollection if it does not exist
-        let typeCollectionList = getListOfTypeCollections(nodes)
+        let typeCollectionList = getListOfTypeCollections(dbJson)
         if (!typeCollectionList.includes(nodeToAdd['@type'])) {
-            initTypeCollection(nodes, typeStr)
+            initTypeCollection(dbJson, typeStr)
         }
 
+/** skip this for now, we're handling it in the script
         // handle bidirectionality if there are any rel-prefixed nodes
         let relPropsList = hasRelProps(nodeToAdd); 
         if (relPropsList.length > 0) {
@@ -310,10 +247,10 @@ function addNode(nodes, nodeToAdd) {
                     });
                 }
             });
-        }
+        } **/
 
         // add this node to the TypeCollection
-        nodes['@graph'][typeStr]['gjs:entries'].push(nodeToAdd)
+        dbJson['@graph'][typeStr]['gjs:entries'].push(nodeToAdd)
     } catch (err) {
         console.error(err)
         throw err;
@@ -322,7 +259,7 @@ function addNode(nodes, nodeToAdd) {
 
 
 // update a node in the list
-function updateNode(nodes, nodeToUpdate) {
+function updateNode(dbJson, nodeToUpdate) {
 
     nodeToUpdate = Object.assign({}, nodeToUpdate)
 
@@ -330,12 +267,12 @@ function updateNode(nodes, nodeToUpdate) {
     //       any rel-prefixed props in this node, identify the types of changes,
     //       then look up the full target and propagate those changes. 
 
-    return nodes.map(node => node.id === nodeToUpdate.id ? { ...node, ...nodeToUpdate } : node);
+    //return nodes.map(node => node.id === nodeToUpdate.id ? { ...node, ...nodeToUpdate } : node);
 }
 
 
 // removes a node from the list
-function removeNode(nodes, nodeToRemove) {
+function removeNode(dbJson, nodeToRemove) {
 
     nodeToRemove = Object.assign({}, nodeToRemove)
 
@@ -343,45 +280,29 @@ function removeNode(nodes, nodeToRemove) {
     //       look up the full target node based on the id
     //       and remove this node"s id from that node entirely
 
-    nodes = nodes.filter(node => node !== nodeToRemove);
+    //nodes = nodes.filter(node => node !== nodeToRemove);
 
-    return nodes
+    // return nodes
 }
 
 
 // add a property to a node template
 // and propagate that change to every node of that nodeType
-function addAPropertyToATemplate(nodes, nodeType, prop, propType, propDefaultVal) {
-    console.log("addAPropertyToATemplate", nodes, nodeType, prop, propType, propDefaultVal);
+function addAPropertyToATemplate(dbJson, nodeType, prop, propType, propDefaultVal) {
+    console.log("addAPropertyToATemplate", dbJson, nodeType, prop, propType, propDefaultVal);
 }
 
 
 // remove a property from a node template
 // and propagate that change to every node of that nodeType
-function removeAPropertyFromATemplate(nodes, nodeType, prop) {
-    console.log("removeAPropertyFromATemplate", nodes, nodeType, prop);
+function removeAPropertyFromATemplate(dbJson, nodeType, prop) {
+    console.log("removeAPropertyFromATemplate", dbJson, nodeType, prop);
 }
 
 
 /********************************** Validation ***************************************/
 
-// verify that all entries in the list are objects
-function validateListContent(nodes) {
-    console.log('validateListContent')
-}
-
-// validate the list of nodes
-function validateList(nodes, doFix = false) {
-    let fixedNodes = [];
-    
-    // implement validation logic here
-    if (doFix) {
-        // implement fixing logic here
-        return fixedNodes;
-    }
-    return nodes;
-}
-
+// coming soon
 
 /****************************** Reference Management *********************************/
 
@@ -410,17 +331,15 @@ module.exports = {
     getDateObjects,
     hasRelProps,
 
-    initList,
     initNode,
-    getNodeByKeyPair,
-    getNodeByKeyPairs,
     
     addNode,
     removeNode,
     updateNode,
-
-    validateListContent,
-    validateList,
+    addAPropertyToATemplate,
+    removeAPropertyFromATemplate,
     
+    convertNodesToCslJson,
+    convertNodesFromCslJson
 };
 
