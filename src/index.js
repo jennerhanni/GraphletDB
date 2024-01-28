@@ -39,7 +39,10 @@ function getRandomToken(nodes, len) {
         }
 
         // check if token is unique
-        isUnique = !boolFoundKeyVal(nodes, "id", token)
+        let existingNodesList = listFoundKeyVal(nodes, "id", token)
+        if (existingNodesList.length === 0) {
+            isUnique = true
+        }
         count++; 
         if (count >= 10) {
             throw new Error("Ten random keys failed uniqueness check.")
@@ -51,27 +54,33 @@ function getRandomToken(nodes, len) {
 }
 
 
-// returns true if a node with the given keypair exists
-// return false if a node with this keypair does not exist
-function boolFoundKeyVal(nodes, key, value) {
+// return a list of entries. if FIRSTONLY is true, 
+// return only the first node encountered.
+function listFoundKeyVal(nodes, key, value, firstOnly=false) {
     try {
+        // catch the obvious higher-level error cases
         if (!nodes["@graph"] || typeof nodes["@graph"] !== "object") {
             throw new Error("Invalid or missing @graph in nodes");
         }
 
+        // find any (firstOnly = true) or all (firstOnly = false) matching entries
+        let entriesToReturn = [];
         for (let typeCollectionKey in nodes["@graph"]) {
             let typeCollection = nodes["@graph"][typeCollectionKey];
             if (typeCollection["@type"] === "TypeCollection" 
                 && Array.isArray(typeCollection["gjs:entries"])) {
                 for (let entry of typeCollection["gjs:entries"]) {
                     if (entry[key] === value) {
-                        return true; // Found the key-value pair
+                        if (firstOnly) {
+                            return [entry]; // found the key-value pair
+                        } else {
+                            entriesToReturn.push(entry)
+                        }
                     }
                 }
             }
         }
-
-        return false; // Key-value pair not found
+        return entriesToReturn; 
     } catch (err) {
         console.error(err.message);
         throw err;
@@ -394,7 +403,7 @@ module.exports = {
     aboutGraphletJS,
     getTypeStr,
     getRandomToken,
-    boolFoundKeyVal,
+    listFoundKeyVal,
     getTemplateObj,
     getListOfTypeCollections,
     getListOfKeys,
