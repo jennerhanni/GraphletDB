@@ -288,14 +288,21 @@ function addNode(nodes, nodeToAdd) {
         }
 
         // handle bidirectionality if there are any rel-prefixed nodes
-        let relPropsList = hasRelProps(nodeToAdd)
+        let relPropsList = hasRelProps(nodeToAdd); 
         if (relPropsList.length > 0) {
-            console.log('relPropsList is nonzero', relPropsList)
-            // if any of these props have nonzero lists, 
-            // update this node's info in all the other node's default values
+            console.log('relPropsList is nonzero', relPropsList);
+            relPropsList.forEach(prop => {
+                let propArray = nodeToAdd[prop];
+                if (Array.isArray(propArray) && propArray.length > 0) {
+                    console.log(`Processing non-empty array for property: ${prop}`);
+                    propArray.forEach(id => {
+                        console.log(`Processing id: ${id} in property: ${prop}`);
+                    });
+                }
+            });
         }
 
-        // add this node to the typecollection
+        // add this node to the TypeCollection
         nodes['@graph'][typeStr]['gjs:entries'].push(nodeToAdd)
     } catch (err) {
         console.error(err)

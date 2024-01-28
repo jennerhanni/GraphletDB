@@ -28,7 +28,8 @@
         ],
         "gjs:@id": "",
         "@type": "gjs:NodeTemplate",
-        "gjs:@text": ""
+        "gjs:@text": "",
+        "gjs:rel__nodes": []
      },
    	 {
       	"@type": "gjs:TypeCollectionTemplate",
