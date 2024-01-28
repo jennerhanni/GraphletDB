@@ -93,8 +93,9 @@ function listFoundKeyVal(nodesDict, targetType, key, value, firstOnly=false) {
 function getTemplateObj(templateNodes, key, val) {
     try {
         console.log('getTemplateObj *****', key, val, templateNodes.find(n => n[key] === val))
-        let nodeToReturn;
-        nodeToReturn = Object.assign({}, templateNodes.find(n => n[key] === val) || null)
+        let nodeToReturn = templateNodes.find(n => n[key] === val) || null
+        nodeToReturn = nodeToReturn ? JSON.parse(JSON.stringify(nodeToReturn)) : null;
+        console.log('getTemplateObj noteToReturn', nodeToReturn)
         return nodeToReturn;
     } catch (e) {
         console.log("getTemplateObj failed, template not found for key, val:", key, val);
@@ -235,21 +236,17 @@ function initNode(dbJson, nodeTypeStr, strUserSlug='default') {
 function addNode(dbJson, nodeToAdd) {
     console.log("addNode nodeToAdd", nodeToAdd)
 
-    nodeToAdd = Object.assign({}, nodeToAdd)
+    nodeToAdd = nodeToAdd ? JSON.parse(JSON.stringify(nodeToAdd)) : null;
     try {
-        // identify the type 
-        let typeStr = getTypeStr(nodeToAdd['@type'])
-        console.log('addNode typeStr', typeStr)
-
         // create the typecollection if it does not exist
         // and add the node to the TypeCollection
         let typeCollectionList = getListOfTypeCollections(dbJson['@graph'])
         console.log('addNode typeCollectionList', typeCollectionList)
         if (!typeCollectionList.includes(nodeToAdd['@type'])) {
-            initTypeCollection(dbJson, typeStr)
-            dbJson['@graph'][typeStr]['gjs:entries'] = [nodeToAdd]
+            initTypeCollection(dbJson, nodeToAdd['@type'])
+            dbJson['@graph'][nodeToAdd['@type']]['gjs:entries'] = [nodeToAdd]
         } else {
-            dbJson['@graph'][typeStr]['gjs:entries'].push(nodeToAdd)
+            dbJson['@graph'][nodeToAdd['@type']]['gjs:entries'].push(nodeToAdd)
         }
         console.log('addNode after initTypeCollection @GRAPH', dbJson['@graph'])
 
@@ -303,7 +300,7 @@ function updateTargetNode(nodesDict, targetType='archively:Placeholder', targetI
 // update a node in the list
 function updateNode(dbJson, nodeToUpdate) {
 
-    nodeToUpdate = Object.assign({}, nodeToUpdate)
+    nodeToUpdate = nodeToUpdate ? JSON.parse(JSON.stringify(nodeToUpdate)) : null;
 
     // todo: compare each keypair before anda after, and if there are changes to 
     //       any rel-prefixed props in this node, identify the types of changes,
@@ -316,7 +313,7 @@ function updateNode(dbJson, nodeToUpdate) {
 // removes a node from the list
 function removeNode(dbJson, nodeToRemove) {
 
-    nodeToRemove = Object.assign({}, nodeToRemove)
+    nodeToRemove = nodeToRemove ? JSON.parse(JSON.stringify(nodeToRemove)) : null;
 
     // todo: if any rel-prefixed props exist,
     //       look up the full target node based on the id
