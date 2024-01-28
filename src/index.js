@@ -4,37 +4,33 @@
 
 // log the version string to the console
 function aboutGraphletJS() {
-    console.log("GraphletJS v0.0.1");
-    return {
-        data: "GraphletJS v0.0.1",
-        msg: "SUCCESS"
-    };
+    return "GraphletJS v0.0.1";
 }
 
 
 // return the working label from a contexted type node
 // - "archively:User" returns User
 function getTypeStr(fullTypeString) {
-    if (typeof fullTypeString !== "string") {
-        return {
-            data: "",
-            msg: "ERROR"
-        };
-    }
-
-    const parts = fullTypeString.split(":");
-    return {
-        msg: "SUCCESS",
-        data: parts.length > 1 ? parts[parts.length - 1] : fullTypeString
+    try {
+        if (typeof fullTypeString !== "string") {
+            throw new Error("The argument 'FullTypeString' is not a string.")
+        } else {
+            const parts = fullTypeString.split(":");
+            return parts.length > 1 ? parts[parts.length - 1] : fullTypeString
+        }
+    } catch (err) {
+        console.error(err);
+        throw err; 
     }
 }
 
 
 // generate a random lowercase hexstring
 // that is not already used as an id in nodes
-function getRandomToken(nodes, len) {    
+function getRandomToken(nodes, len) {   
     let token;
     let isUnique;
+    let count = 0;
 
     do {
         token = "";
@@ -42,62 +38,44 @@ function getRandomToken(nodes, len) {
             token += Math.floor(Math.random() * 16).toString(16); 
         }
 
-        // Check if token is unique
-        let res = boolFoundKeyVal(nodes, "id", token)
-        if (res["msg"] === "SUCCESS" && !res["data"]) {
-            isUnique = !res["data"]
-        }
+        // check if token is unique
+        isUnique = !boolFoundKeyVal(nodes, "id", token)
+        console.log('isUnique', isUnique, token)
+        count++; 
+        if (count >= 10) {
+            throw new Error("Ten random keys failed uniqueness check.")
+            break;
+        }   
     } while (!isUnique);
 
-    return {
-        data: token,
-        msg: "SUCCESS"
-    };
+    return token
 }
 
 
 // returns true if a node with the given keypair exists
 // return false if a node with this keypair does not exist
 function boolFoundKeyVal(nodes, key, value) {
-    if (!nodes["@graph"] || typeof nodes["@graph"] !== "object") {
-        console.error("Invalid or missing @graph in nodes");
-            return {
-                data: false,
-                msg: "ERROR: Invalid or missing @graph"
-            };
-    }
+    try {
+        if (!nodes["@graph"] || typeof nodes["@graph"] !== "object") {
+            throw new Error("Invalid or missing @graph in nodes");
+        }
 
-    for (let typeCollectionKey in nodes["@graph"]) {
-        let typeCollection = nodes["@graph"][typeCollectionKey];
-        if (typeCollection["@type"] === "TypeCollection" && Array.isArray(typeCollection["gjs:entries"])) {
-            for (let entry of typeCollection["gjs:entries"]) {
-                if (entry[key] === value) {
-                    return {
-                        data: true,
-                        msg: "SUCCESS"
-                    };
+        for (let typeCollectionKey in nodes["@graph"]) {
+            let typeCollection = nodes["@graph"][typeCollectionKey];
+            if (typeCollection["@type"] === "TypeCollection" 
+                && Array.isArray(typeCollection["gjs:entries"])) {
+                for (let entry of typeCollection["gjs:entries"]) {
+                    if (entry[key] === value) {
+                        return true; // Found the key-value pair
+                    }
                 }
             }
         }
-    }
 
-    return {
-        data: false,
-        msg: "SUCCESS"
-    };
-
-}
-
-
-function keyValExists(nodes, key, val) {
-    console.log("keyValExists", nodes, key, val)
-
-    let res = getNodeByKeyPair(nodes, key, val, true)
-    console.log("keyValExists res of getNodeBYKeyPair", res.data, Object.keys(res.data).length > 0)
-    if (res.msg === "SUCCESS" && Object.keys(res.data).length > 0) {
-        return true
-    } else {
-        return false
+        return false; // Key-value pair not found
+    } catch (err) {
+        console.error(err.message);
+        throw err;
     }
 }
 
@@ -105,16 +83,10 @@ function keyValExists(nodes, key, val) {
 // get a template object out of the templates array
 function getTemplateObj(nodes, key, val) {
     try {
-        return { 
-            data: nodes["templates"].find(n => n[key] === val) || null,
-            msg: "SUCCESS" 
-        }
+        return nodes["templates"].find(n => n[key] === val) || null
     } catch (e) {
-        console.log("getTemplateObj", key, val);
-        return { 
-            data: e,
-            msg: "ERROR_SEE_DATA" 
-        }
+        console.log("getTemplateObj failed, template not found for key, val:", key, val);
+        throw new Error('template object not found'); 
     }
 }
 
@@ -122,49 +94,47 @@ function getTemplateObj(nodes, key, val) {
 // return a list of all the type collection strings in @graph
 function getListOfTypeCollections(db) {
     try {
-        if (db["@graph"] && typeof db["@graph"] === "object" && !Array.isArray(db["@graph"])) {
-            return { data: Object.keys(db["@graph"]),
-                     msg: "SUCCESS" };
-        } else {
-            return { data: [],
-                     msg: "SUCCESS" };
+        if (!db["@graph"] || typeof db["@graph"] !== "object" || Array.isArray(db["@graph"])) {
+            throw new Error("Invalid or inappropriate @graph structure");
         }
+        return Object.keys(db["@graph"]);
     } catch (error) {
-        console.error("Error in getListOfTypeCollections:", error);
-        return { data: [],
-                 msg: "ERROR" };
+        console.error("Error in getListOfTypeCollections:", error.message);
+        throw error; 
     }
 }
 
-
+// NEEDS TRIPLE CHECK, SOMETHING IS VERY WEIRD
+// WHAT IS THIS FUNCTION FOR?
 // return a list of all keys in a list of nodes
 function getListOfKeys(nodes) {
     console.log("getListOfKeys");
 
-    const keySet = new Set();
+    let keySet = new Set();
 
-    // Add each key from each node to the set
-    nodes.forEach(node => {
-        Object.keys(node).forEach(key => {
-            keySet.add(key);
-        });
+    // check every TypeCollection's nodes in 'entries' to see what keys are present 
+    Object.values(nodes['@graph']).forEach(typeCollection => {
+        if (typeCollection['gjs:entries'] && Array.isArray(typeCollection['gjs:entries'])) {
+            typeCollection['gjs:entries'].forEach(node => {
+                Object.keys(node).forEach(key => {
+                    keySet.add(key);
+                });
+            });
+        }
     });
 
     // Convert set to an array and sort alphabetically
     let keys = Array.from(keySet).sort();
 
     // Prioritize "id", "date", and "label" if they exist in the keys
-    const priorityKeys = ["id", "date", "label"];
+    const priorityKeys = ["@type", "gjs:@id", "gjs:@date", "gjs:@text"];
     priorityKeys.reverse().forEach(key => {
         if (keys.includes(key)) {
             keys = [key, ...keys.filter(k => k !== key)];
         }
     });
 
-    return {
-        data: keys,
-        msg: "SUCCESS"
-    };
+    return keys
 }
 
 
@@ -185,16 +155,11 @@ const getDateObjects = () => {
     const minute = String(now.getMinutes()).padStart(2, "0");
 
     let datestring = `${year}${month}${day}${hour}${minute}`;
-    if (datestring) {    
-        return {
-            data: `${year}${month}${day}${hour}${minute}`,
-            msg: "SUCCESS"
-        };
-    } else {
-        return {
-            data: "",
-            msg: "ERROR_FAILED_TO_CREATE_DATESTRING"
-        };
+
+    try {
+        if (datestring) { return datestring }
+    } catch (err) {
+        throw new Error("Failed to create a typestring.")
     }
 }
 
@@ -211,79 +176,47 @@ function initList() {
     }
 
     console.log("initList", newNode);
-    return {
-        data: [newNode],
-        msg: message
-    };
+    return [newNode]
 }
 
-
+// create a new type collection
+// add it to the @graph array
 function initTypeCollection(nodes, typeStr) {
-    console.log('initTypeCollection')
-    let data = {}
-    let msg = "SUCCESS"
+    console.log('initTypeCollection', typeStr)
 
-    // grab the @type template based on nodeTypeStr and merge if the object exists
-    // otherwise return
-    let res = getTemplateObj(nodes, "@type", "gjs:TypeCollection");
-    console.log('initTypeCollection', res)
-    if (res["msg"] !== "SUCCESS") {
-        return { 
-            data: {},
-            msg: res["msg"]                 
-        }
-    } else {
-        nodes['@graph'][typeStr] = res['data']
-        return { 
-            data: nodes,
-            msg: res["msg"]
-        }
-    }
-
-    
+   try {
+       // grab the @type template for the core template
+       let newTypeCollection = getTemplateObj(nodes, "@type", "gjs:TypeCollection");
+       newTypeCollection['gjs:typeName'] = typeStr;
+       nodes['@graph'][typeStr] = newTypeCollection;
+    } catch (err) {
+        console.error(err);
+    }    
 }
 
-function initNode(nodes, nodeTypeStr, strDateBlame) {
-    // start with the core template object
-    let data = {}
-    let msg = "SUCCESS";
 
-    // grab the @type template based on nodeTypeStr and merge if the object exists
-    // otherwise return
-    let res = getTemplateObj(nodes, "@type", "archively:CoreTemplateObject");
-    if (res["msg"] !== "SUCCESS") {
-        return { 
-            data: {},
-            msg: res["msg"]                 
-        }
-    } else {
-        data = res["data"]
-    }
+// create a new node from a label
+// also supports an optional user slug to override in the updated date
+function initNode(nodes, nodeTypeStr, strUserSlug='default') {
 
-    // grab the @type template based on nodeTypeStr and merge if the object exists
-    // otherwise return
-    res = getTemplateObj(nodes, "@type", nodeTypeStr);
-    if (res["msg"] !== "SUCCESS") {
-        return {
-            data: {},
-            msg: res["msg"]
-        }
-    } else {
-        data = { ...data, ...res["data"] }
-    }
+    try {    
+        // grab the @type template for the core template
+        let newNode = getTemplateObj(nodes, "@type", "archively:CoreTemplateObject"); 
 
-    // update the core props
-    let tokenRes; do {
-        tokenRes = getRandomToken(nodes, 12);
-    } while (tokenRes.msg !== "SUCCESS");
-    data["gjs:@id"] = tokenRes.data;
+        // grab the @type template based on nodeTypeStr 
+        // and merge if the object exists
+        let tObj = getTemplateObj(nodes, '@type', nodeTypeStr);
+        newNode = { ...newNode, ...tObj }
+
+        // update core props
+        newNode["gjs:@id"] = getRandomToken(nodes, 12);
+        newNode["gjs:@date"] = [getDateObjects()+strUserSlug];
     
-    let dateRes; do {
-        dateRes = getDateObjects();
-    } while (dateRes.msg !== "SUCCESS");
-    data["gjs:@date"] = [dateRes.data+strDateBlame];
+        return newNode
 
-    return { data, msg };
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 
@@ -311,90 +244,53 @@ function getNodeByKeyPairs(nodes, keyPairList, boolFirstOnly = false) {
 
 // get a node from the list by KeyPair
 function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
-    console.log("getNodeByKeyPair", nodes, key, value, boolFirstOnly);
-    if (boolFirstOnly) {
-        let nodesToReturn = [Object.assign({}, nodes.find(node => node[key] === value))];
-        return {
-            data: nodesToReturn[0],
-            msg: "SUCCESS"
-        };
-    } else {
-        let nodesToReturn = [Object.assign({}, nodes.find(node => node[key] === value))];
-        return {
-            data: nodesToReturn,
-            msg: "SUCCESS"
-        };
+    try {
+        console.log("getNodeByKeyPair", nodes, key, value, boolFirstOnly);
+        let nodeFound = nodes.find(node => node[key] === value);
+
+        if (!nodeFound) {
+            throw new Error("Node not found");
+        }
+
+        if (boolFirstOnly) {
+            return Object.assign({}, nodeFound);
+        } else {
+            let nodesToReturn = nodes.filter(node => node[key] === value).map(node => Object.assign({}, node));
+            return nodesToReturn;
+        }
+    } catch (err) {
+        console.error(err.message);
+        throw err;
     }
 }
+
 
 // add a new node to @graph
 function addNode(nodes, nodeToAdd) {
     console.log("addNode", nodeToAdd)
-    let res;
 
-    // identify the type 
-    res = getTypeStr(nodeToAdd['@type'])
-    if (res['msg'] !== 'SUCCESS') {
-        return {
-            data: [],
-            msg: res['msg']
+    try {
+        // identify the type 
+        let typeStr = getTypeStr(nodeToAdd['@type'])
+        console.log('addNode typeStr', typeStr)
+
+        // create the typecollection if it does not exist
+        let typeCollectionList = getListOfTypeCollections(nodes)
+        if (!typeCollectionList.includes(nodeToAdd['@type'])) {
+            initTypeCollection(nodes, typeStr)
         }
-    }
-    let typeStr = res['data']
-    
-    // create the typecollection if it does not exist
-    res = getListOfTypeCollections(nodes)
-    if (res['msg'] !== 'SUCCESS') {
-        nodes = initTypeCollection(nodes, typeStr)
-    }
-    console.log('nodes', nodes['@graph'])
+        console.log('nodes', nodes['@graph'])
 
-    // handle bidirectionality if there are any rel-prefixed nodes
+        // handle bidirectionality if there are any rel-prefixed nodes
 
-    // add this node to the typecollection
+        // add this node to the typecollection
 
-    // return the entirely new set of data
-    console.log(typeStr, res['data'])
-}
+        // return the entirely new set of data
+  //      console.log(typeStr, nodes)
 
-// add a new node to the list
-function addNode2(nodes, nodeToAdd) {
-
-    let boolIdExists = keyValExists(nodes, "id", nodeToAdd.id);
-    if (boolIdExists) {
-        return {
-            data: nodes,
-            msg: "ERROR_ID_ALREADY_EXISTS_IN_THE_LIST"
-        };
-
-    } else if (nodeToAdd.id === "") {
-        return {
-            data: nodes,
-            msg: "ERROR_ID_CANNOT_BE_AN_EMPTY_STRING"
-        };
-
-    } else {
-        // don"t create a new Label node if strLabel already exists. 
-        if (nodeToAdd.label === "Label") {
-            let boolStrLabelExists = keyValExists(nodes, "strLabel", nodeToAdd.strLabel);
-            if (boolStrLabelExists) {
-                return {
-                    data: nodes,
-                    msg: "ERROR_STRLABEL_EXISTS"
-                };
-            }
-        }
-
-        // todo: if any rel-prefixed props exist, 
-        //       look up the full target node based on the id
-        //       and add this node.id to the relNodes array in the targetNode
-
-        nodes.push(nodeToAdd);
-
-        return {
-            data: nodes,
-            msg: "SUCCESS"
-        };
+    } catch (err) {
+        console.error(err)
+        throw err;
     }
 }
 
@@ -419,10 +315,7 @@ function removeNode(nodes, nodeToRemove) {
 
     nodes = nodes.filter(node => node !== nodeToRemove);
 
-    return {
-        data: nodes,
-        msg: "SUCCESS"
-    };
+    return nodes
 }
 
 
@@ -444,13 +337,8 @@ function removeAPropertyFromALabelNode(nodes, label, prop) {
 
 // verify that all entries in the list are objects
 function validateListContent(nodes) {
-    const isValid = nodes.every(node => node && typeof node === "object");
-    return {
-        data: isValid,
-        msg: isValid ? "Valid list content." : "Invalid list content. List must contain only node objects."
-    };
+    console.log('validateListContent')
 }
-
 
 // validate the list of nodes
 function validateList(nodes, doFix = false) {
@@ -483,9 +371,10 @@ function convertNodesFromCslJson(nodesToConvert) {
 
 module.exports = {
     aboutGraphletJS,
+    getTypeStr,
     getRandomToken,
+    boolFoundKeyVal,
     getTemplateObj,
-    keyValExists,
     getListOfTypeCollections,
     getListOfKeys,
     getDateObjects,
