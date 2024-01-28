@@ -82,7 +82,7 @@ function boolFoundKeyVal(nodes, key, value) {
 // get a template object out of the templates array
 function getTemplateObj(nodes, key, val) {
     try {
-        return nodes["templates"].find(n => n[key] === val) || null
+        return Object.assign({}, nodes["templates"].find(n => n[key] === val) || null)
     } catch (e) {
         console.log("getTemplateObj failed, template not found for key, val:", key, val);
         throw new Error('template object not found'); 
@@ -219,7 +219,7 @@ function initNode(nodes, nodeTypeStr, strUserSlug='default') {
         newNode["gjs:@id"] = getRandomToken(nodes, 12);
         newNode["gjs:@date"] = [getDateObjects()+strUserSlug];
     
-        return Object.assign({}, newNode)
+        return newNode
 
     } catch (err) {
         console.error(err);
@@ -276,6 +276,7 @@ function getNodeByKeyPair(nodes, key, value, boolFirstOnly) {
 function addNode(nodes, nodeToAdd) {
     console.log("addNode", nodeToAdd)
 
+    nodeToAdd = Object.assign({}, nodeToAdd)
     try {
         // identify the type 
         let typeStr = getTypeStr(nodeToAdd['@type'])
@@ -314,6 +315,8 @@ function addNode(nodes, nodeToAdd) {
 // update a node in the list
 function updateNode(nodes, nodeToUpdate) {
 
+    nodeToUpdate = Object.assign({}, nodeToUpdate)
+
     // todo: compare each keypair before anda after, and if there are changes to 
     //       any rel-prefixed props in this node, identify the types of changes,
     //       then look up the full target and propagate those changes. 
@@ -324,6 +327,8 @@ function updateNode(nodes, nodeToUpdate) {
 
 // removes a node from the list
 function removeNode(nodes, nodeToRemove) {
+
+    nodeToRemove = Object.assign({}, nodeToRemove)
 
     // todo: if any rel-prefixed props exist,
     //       look up the full target node based on the id
