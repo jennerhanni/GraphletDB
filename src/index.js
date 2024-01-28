@@ -40,7 +40,6 @@ function getRandomToken(nodes, len) {
 
         // check if token is unique
         isUnique = !boolFoundKeyVal(nodes, "id", token)
-        console.log('isUnique', isUnique, token)
         count++; 
         if (count >= 10) {
             throw new Error("Ten random keys failed uniqueness check.")
@@ -144,6 +143,7 @@ const getUnixTimestamp = () => {
     return timestamp;
 };
 
+
 // calculates a formatted datetime string in the form YYYYMMDDHHmm
 const getDateObjects = () => {
     const now = new Date();
@@ -164,6 +164,12 @@ const getDateObjects = () => {
 }
 
 
+// return a list of the rel__-prefixed props
+function hasRelProps(nodeToAdd) {
+    return Object.keys(nodeToAdd).filter(key => key.startsWith("archively:rel__"));
+}
+
+
 /****************************** List & Node Handling *********************************/
 
 // init and return a new list with a single Label object
@@ -178,6 +184,7 @@ function initList() {
     console.log("initList", newNode);
     return [newNode]
 }
+
 
 // create a new type collection
 // add it to the @graph array
@@ -195,7 +202,7 @@ function initTypeCollection(nodes, typeStr) {
 }
 
 
-// create a new node from a label
+// create a new node from a type
 // also supports an optional user slug to override in the updated date
 function initNode(nodes, nodeTypeStr, strUserSlug='default') {
 
@@ -212,7 +219,7 @@ function initNode(nodes, nodeTypeStr, strUserSlug='default') {
         newNode["gjs:@id"] = getRandomToken(nodes, 12);
         newNode["gjs:@date"] = [getDateObjects()+strUserSlug];
     
-        return newNode
+        return Object.assign({}, newNode)
 
     } catch (err) {
         console.error(err);
@@ -272,22 +279,24 @@ function addNode(nodes, nodeToAdd) {
     try {
         // identify the type 
         let typeStr = getTypeStr(nodeToAdd['@type'])
-        console.log('addNode typeStr', typeStr)
+        console.log('addNode typeStr', nodeToAdd, typeStr)
 
         // create the typecollection if it does not exist
         let typeCollectionList = getListOfTypeCollections(nodes)
         if (!typeCollectionList.includes(nodeToAdd['@type'])) {
             initTypeCollection(nodes, typeStr)
         }
-        console.log('nodes', nodes['@graph'])
 
         // handle bidirectionality if there are any rel-prefixed nodes
+        let relPropsList = hasRelProps(nodeToAdd)
+        if (relPropsList.length > 0) {
+            console.log('relPropsList is nonzero', relPropsList)
+            // if any of these props have nonzero lists, 
+            // update this node's info in all the other node's default values
+        }
 
         // add this node to the typecollection
-
-        // return the entirely new set of data
-  //      console.log(typeStr, nodes)
-
+        nodes['@graph'][typeStr]['gjs:entries'].push(nodeToAdd)
     } catch (err) {
         console.error(err)
         throw err;
@@ -319,17 +328,17 @@ function removeNode(nodes, nodeToRemove) {
 }
 
 
-// add a property to a Label node
-// and propagate that change to every node of that label
-function addAPropertyToALabelNode(nodes, label, prop, propType, propDefaultVal) {
-    console.log("addAPropertyToALabelNode", nodes, label, prop, propType, propDefaultVal);
+// add a property to a node template
+// and propagate that change to every node of that nodeType
+function addAPropertyToATemplate(nodes, nodeType, prop, propType, propDefaultVal) {
+    console.log("addAPropertyToATemplate", nodes, nodeType, prop, propType, propDefaultVal);
 }
 
 
-// remove a property from a Label node
-// and propagate that change to every node of that label
-function removeAPropertyFromALabelNode(nodes, label, prop) {
-    console.log("removeAPropertyFromALabelNode", nodes, label, prop);
+// remove a property from a node template
+// and propagate that change to every node of that nodeType
+function removeAPropertyFromATemplate(nodes, nodeType, prop) {
+    console.log("removeAPropertyFromATemplate", nodes, nodeType, prop);
 }
 
 
@@ -378,6 +387,7 @@ module.exports = {
     getListOfTypeCollections,
     getListOfKeys,
     getDateObjects,
+    hasRelProps,
 
     initList,
     initNode,
