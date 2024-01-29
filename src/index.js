@@ -66,15 +66,18 @@ function listFoundKeyVal(nodesDict, targetType, key, value, firstOnly=false) {
 
         // find any (firstOnly = true) or all (firstOnly = false) matching entries
         let entriesToReturn = [];
+        console.log('firstonly!!', nodesDict)
         for (let typeCollectionKey in nodesDict) {
             let typeCollection = nodesDict[typeCollectionKey];
-            if (typeCollection["@type"] === "TypeCollection" 
+            if (typeCollection["@type"] === "gjs:TypeCollection" 
                 && Array.isArray(typeCollection["gjs:entries"])) {
                 for (let entry of typeCollection["gjs:entries"]) {
                     if (entry[key] === value) {
                         if (firstOnly) {
+                            console.log('firstonly!!', entry)
                             return [entry]; // found the key-value pair
                         } else {
+                            console.log('add to existing entriesToReturn', entry)
                             entriesToReturn.push(entry)
                         }
                     }
@@ -248,9 +251,7 @@ function addNode(dbJson, nodeToAdd) {
         } else {
             dbJson['@graph'][nodeToAdd['@type']]['gjs:entries'].push(nodeToAdd)
         }
-        console.log('addNode after initTypeCollection @GRAPH', dbJson['@graph'])
-
-        
+        console.log('addNode after initTypeCollection @GRAPH', dbJson['@graph'])        
     } catch (err) {
         console.error(err)
         throw err;
@@ -273,7 +274,6 @@ function addNode(dbJson, nodeToAdd) {
             });
         } 
 **/
-
 // enforce bidirectionality by ADD or REMOVE a sourceId from a target node's appropriate rel__ prop
 function updateTargetNode(nodesDict, targetType='archively:Placeholder', targetId, sourceId, 
                           relKey='gjs:rel__nodes', op) {
@@ -296,32 +296,77 @@ function updateTargetNode(nodesDict, targetType='archively:Placeholder', targetI
     }
 }
 
-
 // update a node in the list
 function updateNode(dbJson, nodeToUpdate) {
-
+    console.log('updateNode nodeToUpdate', nodeToUpdate);
     nodeToUpdate = nodeToUpdate ? JSON.parse(JSON.stringify(nodeToUpdate)) : null;
 
-    // todo: compare each keypair before anda after, and if there are changes to 
-    //       any rel-prefixed props in this node, identify the types of changes,
-    //       then look up the full target and propagate those changes. 
+    if (!nodeToUpdate || !nodeToUpdate['gjs:@id'] || !nodeToUpdate['@type']) {
+        console.error('Invalid nodeToUpdate data');
+        return;
+    }
 
-    //return nodes.map(node => node.id === nodeToUpdate.id ? { ...node, ...nodeToUpdate } : node);
+    try {
+        let typeCollection = dbJson['@graph'][nodeToUpdate['@type']]['gjs:entries'];
+        if (!typeCollection) {
+            console.error('Type collection not found');
+            return;
+        }
+
+        // Find the index of the node to update
+        const index = typeCollection.findIndex(node => node['gjs:@id'] === nodeToUpdate['gjs:@id']);
+
+        // If the node is found, replace it
+        if (index !== -1) {
+            typeCollection[index] = nodeToUpdate;
+            console.log('Node updated successfully');
+        } else {
+            console.error('Node not found');
+        }
+
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
 }
 
 
 // removes a node from the list
 function removeNode(dbJson, nodeToRemove) {
+    console.log('removeNode', nodeToRemove)
 
     nodeToRemove = nodeToRemove ? JSON.parse(JSON.stringify(nodeToRemove)) : null;
 
-    // todo: if any rel-prefixed props exist,
-    //       look up the full target node based on the id
-    //       and remove this node"s id from that node entirely
+    if (!nodeToRemove || !nodeToRemove['gjs:@id'] || !nodeToRemove['@type']) {
+        console.error('Invalid nodeToRemove data');
+        return;
+    }
 
-    //nodes = nodes.filter(node => node !== nodeToRemove);
+    try {
+        let typeCollection = dbJson['@graph'][nodeToRemove['@type']]['gjs:entries'];
+        if (!typeCollection) {
+            console.error('Type collection not found');
+            return;
+        }
 
-    // return nodes
+        // Find the index of the node to update
+        const index = typeCollection.findIndex(node => node['gjs:@id'] === nodeToRemove['gjs:@id']);
+
+        // If the node is found, remove it
+        if (index !== -1) {
+            typeCollection.splice(index, 1);
+            console.log('Node updated successfully');
+        } else {
+            console.error('Node not found');
+        }
+
+        // TODO: enforce bidirectionality by looking up every node in rel__ props
+        // and removing this node's id from the rel__ props of those target nodes 
+
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
 }
 
 
