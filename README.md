@@ -9,27 +9,137 @@ The library provides functions to add and remove records, update records in plac
 ## Installation
 
 ```
-npm install --save graphletjs
+npm install --save graphletdb
 ```
 
 ## Usage
 
 ```
-const { aboutGraphletJS } = require('graphletjs');
-aboutGraphletJS(); // This will log "GraphletJS v0.0.1" to the console
+const { aboutGraphletDB } = require('graphletdb');
+aboutGraphletDB(); // This will log "GraphletDB v0.0.1" to the console
 ```
 
 ## Demo
 
-To see the demo of GraphletJS in action, first clone the repository.
+To see the demo of GraphletDB in action, first clone the repository.
 
 ```
-git clone https://github.com/jennerhanni/GraphletJS.git
+git clone https://github.com/jennerhanni/GraphletDB.git
 ```
 
 Then, open the `index.html` file located in the `demo` directory in your web browser.
 
-## GraphletJS Schema
+## Dataset Structure
+
+```
+{
+  @context: {},
+  @id: "",
+  @type: "Dataset",
+  creator: {},
+  distribution: {},
+  radioOption: {},
+  templates: [],
+  @graph: []
+}
+```
+
+**@context**
+
+In JSON-LD, @context provides links to precise definitions for the properties used in the object. 
+
+In this example, the "date" property is ambiguous.
+
+```
+{
+  "name": "Ancient Vase",
+  "date": "500-300 BC"
+}
+```
+
+However, we can be more precise when we incorporate specific definitions.
+
+```
+{
+  "@context": {
+    "name": "http://schema.org/name",
+    "creationDate": "http://schema.org/dateCreated"
+  },
+  "name": "Ancient Vase",
+  "creationDate": "500-300 BC"
+}
+```
+
+**@id**
+
+This id is a unique identifier, usually a resource link, so this dataset can be referenced across the internet. 
+
+```
+"@id": "http://af3c52e46cd.org/db.json  ",
+```
+
+**@type**
+
+The type of the object, in this case "Dataset". 
+
+```
+"@type": "dc:Dataset",
+```
+
+**creator**
+
+This object contains information about the creating individual or organization that is responsible for this dataset. It includes contact information.
+
+```
+  "creator": {
+    "@type": "Organization",
+    "url": "https://www.wallowanezpercearchive.org/",
+    "name": "Nez Perce Wallowa Homeland",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "office",
+      "telephone": "(541) 886-3101",
+      "email": "info@wallowanezperce.org"
+    }
+  }
+```
+
+**distribution**
+
+This object contains the direct link to the dataset itself.
+
+```
+  "distribution": {
+    "@type": "DataDownload",
+    "encodingFormat": "JSON",
+    "contentUrl": "https://www.wallowanezpercearchive.org/data.json"
+  }
+```
+
+**radioOption**
+
+GraphletDB provides an object in which to store sets of radio options within the dataset. 
+
+**templates**
+
+
+
+### Archively Example
+
+Additional top-level objects are allowed. For example, the Archively dataset includes all of the above elements along with a "website" object and a 
+
+website: {}
+archively2cslMap: {}
+
+## Property Definitions @context
+
+
+
+## Node Types @graph
+
+## 
+
+## GraphletDB Schema
 
 Where required, the `nodes` argument in each function should be a list that is the full database.
 
@@ -101,7 +211,7 @@ const validNodes = [
 # API Reference
 
 ## Helper Functions
-- [aboutGraphletJS()](#-aboutgraphletjs)
+- [aboutGraphletDB()](#-aboutgraphletdb)
 - [getRandomToken(nodes, len)](#-getrandomtokennodes-len)
 - [getListOfLabels(nodes, objOrIds)](#-getlistoflabelsnodes-objorids)
 - [getListOfKeys(nodes)](#-getlistofkeysnodes)
@@ -126,12 +236,12 @@ const validNodes = [
 
 ## API: Helper Functions
 
-### 🔧 aboutGraphletJS()
+### 🔧 aboutGraphletDB()
 
-This helper function logs the current version of GraphletJS to the console. 
+This helper function logs the current version of GraphletDB to the console. 
 
 ```javascript
-aboutGraphletJS();  // Outputs "GraphletJS v0.0.1"
+aboutGraphletDB();  // Outputs "GraphletDB v0.0.1"
 ```
 
 ### 🔧 getRandomToken(nodes, len)
@@ -182,7 +292,7 @@ console.log(labelIds);
 
 ### 🔧 initList()
 
-This function initializes returns a predefined minimal list that meets the GraphletJS schema. This can be used to set up or reset a list to a known default state that contains one Label object.
+This function initializes returns a predefined minimal list that meets the GraphletDB schema. This can be used to set up or reset a list to a known default state that contains one Label object.
 
 Returns an **array** containing a single Label object. The structure and content of the Label object are determined by the `initLabelNode`.
 
@@ -245,4 +355,4 @@ Optional: if doFix is true, return a fixed list.
 
 ## License
 
-GraphletJS is available for use under the GPL-3.0. See the [LICENSE](LICENSE) for more information.
+GraphletDB is available for use under the GPL-3.0. See the [LICENSE](LICENSE) for more information.

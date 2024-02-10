@@ -42,7 +42,7 @@ function getRandomToken(nodesDict, len) {
         if (existingNodesList.length === 0) {
             isUnique = true
         }
-        count++; 
+        count++; listFoundKey
         if (count >= 10) {
             throw new Error("Ten random keys failed uniqueness check.")
             break;
@@ -66,7 +66,6 @@ function listFoundKeyVal(nodesDict, targetType, key, value, firstOnly=false) {
 
         // find any (firstOnly = true) or all (firstOnly = false) matching entries
         let entriesToReturn = [];
-        console.log('firstonly!!', nodesDict)
         for (let typeCollectionKey in nodesDict) {
             let typeCollection = nodesDict[typeCollectionKey];
             if (typeCollection["@type"] === "gjs:TypeCollection" 
@@ -74,7 +73,6 @@ function listFoundKeyVal(nodesDict, targetType, key, value, firstOnly=false) {
                 for (let entry of typeCollection["gjs:entries"]) {
                     if (entry[key] === value) {
                         if (firstOnly) {
-                            console.log('firstonly!!', entry)
                             return [entry]; // found the key-value pair
                         } else {
                             console.log('add to existing entriesToReturn', entry)
@@ -183,8 +181,27 @@ const getDateObjects = () => {
 
 // return a list of the rel__-prefixed props
 // TODO: test this!! should work on the rel__prop itself and disregard the "context:"
-function hasRelProps(nodeToAdd) {
+const hasRelProps = (nodeToAdd) => {
     return Object.keys(nodeToAdd).filter(key => getTypeStr(key).startsWith("rel__"));
+}
+
+// from a list of ids, create a list of node objects
+const getListOfObjFromListOfIds = (nodesDict, ids, targetType, key) => {
+    console.log("getListOfObjFromListOfIds", ids, targetType, key)
+    let listOfNodeObjects = [];
+
+    for (let id of ids) {
+        // Use listFoundKeyVal to find the node object with the given ID
+        // Assuming the key for ID in your node objects is 'gjs:@id'
+        let foundNodes = listFoundKeyVal(nodesDict, targetType, key, id, true);
+
+        // If a node with this ID is found, add it to the list
+        if (foundNodes && foundNodes.length > 0) {
+            listOfNodeObjects.push(foundNodes[0]);
+        }
+    }
+
+    return listOfNodeObjects;
 }
 
 
@@ -414,6 +431,7 @@ module.exports = {
     getListOfKeys,
     getDateObjects,
     hasRelProps,
+    getListOfObjFromListOfIds,
 
     initNode,
     
