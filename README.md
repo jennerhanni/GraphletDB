@@ -44,11 +44,13 @@ Then, open the `index.html` file located in the `demo` directory in your web bro
 }
 ```
 
+### Object Definitions
+
 **@context**
 
 In JSON-LD, @context provides links to precise definitions for the properties used in the object. 
 
-In this example, the "date" property is ambiguous.
+For example, the "date" property can be ambiguous.
 
 ```
 {
@@ -57,7 +59,7 @@ In this example, the "date" property is ambiguous.
 }
 ```
 
-However, we can be more precise when we incorporate specific definitions.
+We can be more clear by defining our terms.
 
 ```
 {
@@ -72,7 +74,7 @@ However, we can be more precise when we incorporate specific definitions.
 
 **@id**
 
-This id is a unique identifier, usually a resource link, so this dataset can be referenced across the internet. 
+This id is a unique identifier, usually a resource link, so this dataset can be referenced directly from across the internet. 
 
 ```
 "@id": "http://af3c52e46cd.org/db.json  ",
@@ -88,18 +90,18 @@ The type of the object, in this case "Dataset".
 
 **creator**
 
-This object contains information about the creating individual or organization that is responsible for this dataset. It includes contact information.
+This object contains information about the responsible individual or organization, including contact information.
 
 ```
   "creator": {
     "@type": "Organization",
-    "url": "https://www.wallowanezpercearchive.org/",
-    "name": "Nez Perce Wallowa Homeland",
+    "url": "https://www.whimsicalwidgetry.org/",
+    "name": "Whimsical Widgetry",
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "office",
-      "telephone": "(541) 886-3101",
-      "email": "info@wallowanezperce.org"
+      "telephone": "(555) 246-1357",
+      "email": "info@whimsicalwidgetry.org"
     }
   }
 ```
@@ -112,101 +114,257 @@ This object contains the direct link to the dataset itself.
   "distribution": {
     "@type": "DataDownload",
     "encodingFormat": "JSON",
-    "contentUrl": "https://www.wallowanezpercearchive.org/data.json"
+    "contentUrl": "https://www.whimsicalwidgetry.org/db.json"
   }
 ```
 
 **radioOption**
 
-GraphletDB provides an object in which to store sets of radio options within the dataset. 
+GraphletDB provides an object in which to store sets of radio options within the dataset. This is an example from the Archively museum collections app, which has Keyword nodes that require a type, as well as Item nodes that have a privacy status.
+
+```
+"radioOption": {
+  "KeywordType": [
+    "Topic",
+    "Person",
+    "Group",
+    "Place",
+    "Date",
+    "Medium",
+    "Event",
+    "Type"
+  ],
+  "PrivacyStatus": [
+    "Public",
+    "Private",
+    "Confidential",
+    "Unassessed"
+  ],
+}
+```
+
 
 **templates**
 
+This object is a list. It should probably be an object. 🤷‍♂️
+
+There are three required template objects. 
+
+```
+"templates": [
+  {
+    "@type": "gjs:TypeCollection",
+    "gjs:typeName": "",
+    "gjs:entries": []
+  },
+  {
+    "gjs:@date": [
+      ""
+    ],
+    "gjs:@id": "",
+    "@type": "gjs:CoreTemplateObject",
+    "gjs:@text": "",
+    "gjs:rel__nodes": []
+  },
+  {
+    "@type": "archively:Placeholder"
+  },
+```
+
+**@graph**
+
+This object is a dictionary of TypeCollection objects indexed by the @type of node collected. 
+
+This is the actual data carried in the dataset. These are nodes which have varying lists of properties based on their @type. 
+
+```
+"@graph": {
+  "archively:Item": {
+    "@type": "gjs:TypeCollection",
+    "gjs:typeName": "archively:Person",
+    "gjs:entries": [
+      {
+        "gjs:@date": [
+          "202402010658jenner"
+        ],
+        "gjs:@id": "e95bc8c502",
+        "@type": "archively:Person",
+        "archively:firstName": "John",
+        "archively:lastName": "Rando"
+        "archively:worksCreated": ["c2092618aa3840"]
+        "gjs:rel__nodes": []
+      }
+    ],
+  },
+  "archively:Book": {
+    "@type": "gjs:TypeCollection",
+    "gjs:typeName": "archively:Book",
+    "gjs:entries": [
+      {
+        "gjs:@date": [
+          "2023081102301jenner"
+        ],
+        "gjs:@id": "c2092618aa3840",
+        "@type": "archively:Book",
+        "archively:rel__writtenBy": ["e95bc8c502"],
+        "gjs:rel__nodes": []
+      }
+    ],
+  },
+}
+```
+
+## Property Definitions
+
+GraphletDB definitions: 
+
+```
+graphletdb.com/terms/TypeCollection
+```
+
+|TypeCollection||
+|---|---|
+|Vocabulary|http://graphletdb.com/terms|
+|URI|http://graphletdb.com/terms/TypeCollection|
+|Label|TypeCollection|
+|Definition|A collection of resources that all belong to the same data type.|
+|Comment||
+|Type of Term|Class|
+
+```
+graphletdb.com/terms/@id
+```
+
+|@id||
+|---|---|
+|Vocabulary|http://graphletdb.com/terms|
+|URI|http://graphletdb.com/terms/@id|
+|Label|@id|
+|Definition|Identifier unique inside the dataset. Required.|
+|Comment||
+|Type of Term|Class|
+
+```
+graphletdb.com/terms/@text
+```
+
+|@text||
+|---|---|
+|Vocabulary|http://graphletdb.com/terms|
+|URI|http://graphletdb.com/terms/@text|
+|Label|@text|
+|Definition|String descriptor of the object.|
+|Comment||
+|Type of Term|Class|
+
+```
+graphletdb.com/terms/entries
+```
+
+|@entries||
+|---|---|
+|Vocabulary|http://graphletdb.com/terms|
+|URI|http://graphletdb.com/terms/entries|
+|Label|entries|
+|Definition|List of objects contained in this TypeCollection.|
+|Comment||
+|Type of Term|Class|
+
+```
+graphletdb.com/terms/typeContained
+```
+
+|typeContained||
+|---|---|
+|Vocabulary|http://graphletdb.com/terms|
+|URI|http://graphletdb.com/terms/typeContained|
+|Label|typeContained|
+|Definition|The @type contained in this TypeCollection.|
+|Comment||
+|Type of Term|Class|
+
+```
+graphletdb.com/terms/@date
+```
+
+|@date||
+|---|---|
+|Vocabulary|http://graphletdb.com/terms|
+|URI|http://graphletdb.com/terms/@date|
+|Label|@date|
+|Definition|List of formatted strings recording every event when this object was edited.|
+|Comment|The string contains two parts. First, a 14-digit integer string in the format YYYYMMDDHHmmss. For example: 20240102162223 is January 1st, 2024, at 4:22 pm and 23 seconds. Second, an alphanumeric string intended to show a username. The default value is "admin".|
+|Type of Term|Class|
+
+```
+graphletdb.com/terms/rel__nodes
+```
+
+|rel__nodes||
+|---|---|
+|Vocabulary|http://graphletdb.com/terms|
+|URI|http://graphletdb.com/terms/rel__nodes|
+|Label|rel__nodes|
+|Definition|List of id strings of other nodes in the @graph dataset.|
+|Comment||
+|Type of Term|Class|
+
+```
+graphletdb.com/terms/CoreTemplateObject
+```
+
+|coreTemplateObject||
+|---|---|
+|Vocabulary|http://graphletdb.com/terms|
+|URI|http://graphletdb.com/terms/coreTemplateObject|
+|Label|coreTemplateObject|
+|Definition|An object containing the minimum required properties for a valid node.|
+|Comment||
+|Type of Term|Class|
+
+## Node Definitions
+
+At a minimum, each node must contain the properties that occur in the CoreTemplateObject.
+
+Of these, `@id` and `@type` are required. `@date` and `rel__nodes` must both be lists, but they can be empty.
+
+```
+{
+  "@type": "archively:Person",
+  "gjs:@date": [
+    "202402010658jenner"
+  ],
+  "gjs:@id": "e95bc8c502",
+  "gjs:rel__nodes": []
+}
+```
+
+## Property Type Prefixes
+
+GraphletDB requires prefixes on user-added properties, based on the type. Supported prefixes are:
+
+|Prefix|Definition|
+|---|---|
+|bool__|boolean|
+|int__|integer|
+|radio__|list of string options|
+|rel__|list of "id" strings|
+|str__|string|
+|list__|list|
 
 
-### Archively Example
 
-Additional top-level objects are allowed. For example, the Archively dataset includes all of the above elements along with a "website" object and a 
+
+
+
+
+
+### Archively Example 
+
+Archively is an open source app that Additional top-level objects are allowed. For example, the Archively dataset includes all of the above elements along with a "website" object and a 
 
 website: {}
 archively2cslMap: {}
-
-## Property Definitions @context
-
-
-
-## Node Types @graph
-
-## 
-
-## GraphletDB Schema
-
-Where required, the `nodes` argument in each function should be a list that is the full database.
-
-Every node should have at minimum three string properties and one property that is a list of `id` strings. 
-
-- The required `id` property must be a unique string.
-
-- The required `date` property must be a 12-digit string in the form `YYYYMMDDHHmm`.
-
-- The required `label` property must be a string with no spaces. 
-
-- The required `relNodes` property must be a list of id strings. 
-
-Any additional properties must start with a type suffix, and the type of the associated property's value must be the same. The type suffix options are `bool (true/false)`, `str (string)`, `list (list)`, `rel (list of id strings)`, or `obj (obj)`.
-
-If the list contains only one object, that object's label should be `Label`, and it should include a property called `strLabel` that contains a label value that is also a string without spaces. This node is called a `Label` node. 
-
-If a property is added, removed, or updated in a `Label` node, that change is propagated to all nodes bearing that `Label` node's `strLabel` value. 
-
-The database requires bidirectional linking. The `id` strings in rel-prefixed properties describe relationships. In the example data below, the node with id `eee` includes the node with id `ccc` in its list of related topics. To fulfill the requirement of bidirectional linking, the node with id `ccc` includes `eee` in its default catch-all property for related nodes. In the future, another property may be added to `Topic` nodes such as `ccc` that would better describe the
-relationship with node `eee` but this meets the minimum requirement for now. 
-
-**Example Data**
-
-```
-const validNodes = [
-    {   id: 'aaa',
-        label: 'Label',
-        date: '202312311822',
-        strLabel: 'Label',
-        strLabelDesc: 'The basic building block of the database.',
-        relNodes: []
-    },
-    {   id: 'bbb',
-        label: 'Label',
-        date: '202312311828',
-        strLabel: 'Topic',
-        strLabelDesc: 'A tag, keyword, topic, subject, person, place, etc by which other nodes can be linked.',
-        strText: '',
-        relNodes: []
-    },
-    {   id: 'ccc',
-        label: 'Topic',
-        date: '202312210727',
-        strText: 'U.S. Presidents',
-        relNodes: ['eee']
-    },
-    {   id: 'ddd',
-        label: 'Label',
-        date: '202312210727',
-        strLabel: 'Person',
-        strLabelDesc: 'A human individual, real or mythological.' },
-        strFirstName: '',
-        strLastName: '',
-        relTopics: [],
-        relNodes: []
-    },
-    {   id: 'eee',
-        label: 'Person',
-        date: '202312210729',
-        strFirstName: 'George',
-        strLastName: 'Washington',
-        relTopics: ['ccc'],
-        relNodes: []
-    },
-];
-```
 
 # API Reference
 
