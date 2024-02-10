@@ -2,9 +2,9 @@
 
 ## Introduction
 
-GraphletDB is an extensible property graph database written in JSON-LD. This is not a database intended for scaling or production, but for prototyping and for early explorations into a dataset where the ideal schema is unclear.
+GraphletDB is an extensible property graph database written in JSON-LD. This is not a database intended for scaling or production, but for prototyping and for early explorations into a dataset where the ideal schema is unclear. GraphletDB creates nodes and relationships out of your data, then lets you directly edit the property names and types. 
 
-The database provides functions to add and remove records, update records in place, add and remove label-associated properties, create a new records of an existing label, and validate that each entry meets the basic requirements of the GraphletDB schema.  
+The library provides functions to add and remove records, update records in place, add and remove label-associated properties, create a new records of an existing label, and validate that each entry meets the basic requirements of the GraphletDB schema.
 
 ## Installation
 
