@@ -3,8 +3,8 @@
 /**************************************** Helpers ************************************/
 
 // log the version string to the console
-function aboutGraphletJS() {
-    return "GraphletJS v0.0.1";
+function aboutGraphletDB() {
+    return "GraphletDB v0.0.1";
 }
 
 
@@ -68,9 +68,9 @@ function listFoundKeyVal(nodesDict, targetType, key, value, firstOnly=false) {
         let entriesToReturn = [];
         for (let typeCollectionKey in nodesDict) {
             let typeCollection = nodesDict[typeCollectionKey];
-            if (typeCollection["@type"] === "gjs:TypeCollection" 
-                && Array.isArray(typeCollection["gjs:entries"])) {
-                for (let entry of typeCollection["gjs:entries"]) {
+            if (typeCollection["@type"] === "gdb:TypeCollection" 
+                && Array.isArray(typeCollection["gdb:entries"])) {
+                for (let entry of typeCollection["gdb:entries"]) {
                     if (entry[key] === value) {
                         if (firstOnly) {
                             return [entry]; // found the key-value pair
@@ -128,8 +128,8 @@ function getListOfKeys(nodesDict) {
 
     // check every TypeCollection's nodes in 'entries' to see what keys are present 
     Object.values(nodesDict).forEach(typeCollection => {
-        if (typeCollection['gjs:entries'] && Array.isArray(typeCollection['gjs:entries'])) {
-            typeCollection['gjs:entries'].forEach(node => {
+        if (typeCollection['gdb:entries'] && Array.isArray(typeCollection['gdb:entries'])) {
+            typeCollection['gdb:entries'].forEach(node => {
                 Object.keys(node).forEach(key => {
                     keySet.add(key);
                 });
@@ -141,7 +141,7 @@ function getListOfKeys(nodesDict) {
     let keys = Array.from(keySet).sort();
 
     // Prioritize "id", "date", and "label" if they exist in the keys
-    const priorityKeys = ["@type", "gjs:@id", "gjs:@date", "gjs:@text"];
+    const priorityKeys = ["@type", "gdb:@id", "gdb:@date", "gdb:@text"];
     priorityKeys.reverse().forEach(key => {
         if (keys.includes(key)) {
             keys = [key, ...keys.filter(k => k !== key)];
@@ -192,7 +192,7 @@ const getListOfObjFromListOfIds = (nodesDict, ids, targetType, key) => {
 
     for (let id of ids) {
         // Use listFoundKeyVal to find the node object with the given ID
-        // Assuming the key for ID in your node objects is 'gjs:@id'
+        // Assuming the key for ID in your node objects is 'gdb:@id'
         let foundNodes = listFoundKeyVal(nodesDict, targetType, key, id, true);
 
         // If a node with this ID is found, add it to the list
@@ -214,8 +214,8 @@ function initTypeCollection(dbJson, typeStr) {
 
    try {
        // grab the @type template for the core template
-       let newTypeCollection = getTemplateObj(dbJson['templates'], "@type", "gjs:TypeCollection");
-       newTypeCollection['gjs:typeName'] = typeStr;
+       let newTypeCollection = getTemplateObj(dbJson['templates'], "@type", "gdb:TypeCollection");
+       newTypeCollection['gdb:typeName'] = typeStr;
        console.log('newTC', newTypeCollection)
        dbJson['@graph'][typeStr] = newTypeCollection;
        console.log("@GRAPH", dbJson['@graph'])
@@ -239,8 +239,8 @@ function initNode(dbJson, nodeTypeStr, strUserSlug='default') {
         newNode = { ...newNode, ...tObj }
 
         // update core props
-        newNode["gjs:@id"] = getRandomToken(dbJson['@graph'], 12);
-        newNode["gjs:@date"] = [getDateObjects()+strUserSlug];
+        newNode["gdb:@id"] = getRandomToken(dbJson['@graph'], 12);
+        newNode["gdb:@date"] = [getDateObjects()+strUserSlug];
     
         return newNode
 
@@ -264,9 +264,9 @@ function addNode(dbJson, nodeToAdd) {
         console.log('addNode typeCollectionList', typeCollectionList)
         if (!typeCollectionList.includes(nodeToAdd['@type'])) {
             initTypeCollection(dbJson, nodeToAdd['@type'])
-            dbJson['@graph'][nodeToAdd['@type']]['gjs:entries'] = [nodeToAdd]
+            dbJson['@graph'][nodeToAdd['@type']]['gdb:entries'] = [nodeToAdd]
         } else {
-            dbJson['@graph'][nodeToAdd['@type']]['gjs:entries'].push(nodeToAdd)
+            dbJson['@graph'][nodeToAdd['@type']]['gdb:entries'].push(nodeToAdd)
         }
         console.log('addNode after initTypeCollection @GRAPH', dbJson['@graph'])        
     } catch (err) {
@@ -285,7 +285,7 @@ function addNode(dbJson, nodeToAdd) {
                     console.log(`Processing non-empty array for property: ${prop}`);
                     propArray.forEach(id => {
                         console.log(`Processing id: ${id} in property: ${prop}`);
-                        updateTargetNode(dbJson['@graph'], null, id, nodeToAdd['gjs:@id'], prop, 'ADD')
+                        updateTargetNode(dbJson['@graph'], null, id, nodeToAdd['gdb:@id'], prop, 'ADD')
                     });
                 }
             });
@@ -293,12 +293,12 @@ function addNode(dbJson, nodeToAdd) {
 **/
 // enforce bidirectionality by ADD or REMOVE a sourceId from a target node's appropriate rel__ prop
 function updateTargetNode(nodesDict, targetType='archively:Placeholder', targetId, sourceId, 
-                          relKey='gjs:rel__nodes', op) {
+                          relKey='gdb:rel__nodes', op) {
     console.log('updateTargetNode', nodesDict, targetType, targetId, sourceId, relKey, op)
 
     try {
         // find the target node in nodesDict
-        let foundNodesList = listFoundKeyVal(nodesDict, targetType, 'gjs:@id', targetId, true)
+        let foundNodesList = listFoundKeyVal(nodesDict, targetType, 'gdb:@id', targetId, true)
 
         // if the node does not exist, create it 
         if (!foundNodesList || foundNodesList.length === 0) {
@@ -318,20 +318,20 @@ function updateNode(dbJson, nodeToUpdate) {
     console.log('updateNode nodeToUpdate', nodeToUpdate);
     nodeToUpdate = nodeToUpdate ? JSON.parse(JSON.stringify(nodeToUpdate)) : null;
 
-    if (!nodeToUpdate || !nodeToUpdate['gjs:@id'] || !nodeToUpdate['@type']) {
+    if (!nodeToUpdate || !nodeToUpdate['gdb:@id'] || !nodeToUpdate['@type']) {
         console.error('Invalid nodeToUpdate data');
         return;
     }
 
     try {
-        let typeCollection = dbJson['@graph'][nodeToUpdate['@type']]['gjs:entries'];
+        let typeCollection = dbJson['@graph'][nodeToUpdate['@type']]['gdb:entries'];
         if (!typeCollection) {
             console.error('Type collection not found');
             return;
         }
 
         // Find the index of the node to update
-        const index = typeCollection.findIndex(node => node['gjs:@id'] === nodeToUpdate['gjs:@id']);
+        const index = typeCollection.findIndex(node => node['gdb:@id'] === nodeToUpdate['gdb:@id']);
 
         // If the node is found, replace it
         if (index !== -1) {
@@ -354,20 +354,20 @@ function removeNode(dbJson, nodeToRemove) {
 
     nodeToRemove = nodeToRemove ? JSON.parse(JSON.stringify(nodeToRemove)) : null;
 
-    if (!nodeToRemove || !nodeToRemove['gjs:@id'] || !nodeToRemove['@type']) {
+    if (!nodeToRemove || !nodeToRemove['gdb:@id'] || !nodeToRemove['@type']) {
         console.error('Invalid nodeToRemove data');
         return;
     }
 
     try {
-        let typeCollection = dbJson['@graph'][nodeToRemove['@type']]['gjs:entries'];
+        let typeCollection = dbJson['@graph'][nodeToRemove['@type']]['gdb:entries'];
         if (!typeCollection) {
             console.error('Type collection not found');
             return;
         }
 
         // Find the index of the node to update
-        const index = typeCollection.findIndex(node => node['gjs:@id'] === nodeToRemove['gjs:@id']);
+        const index = typeCollection.findIndex(node => node['gdb:@id'] === nodeToRemove['gdb:@id']);
 
         // If the node is found, remove it
         if (index !== -1) {
@@ -407,13 +407,13 @@ function removeAPropertyFromATemplate(dbJson, nodeType, prop) {
 
 /****************************** Reference Management *********************************/
 
-// convert a set of nodes in GraphletJS format to CSL JSON
+// convert a set of nodes in GraphletDB format to CSL JSON
 function convertNodesToCslJson(nodesToConvert) {
     console.log("convertNodesToCslJson", nodesToConvert);
 }
 
 
-// convert a set of nodes from CSL JSON to the GraphletJS format
+// convert a set of nodes from CSL JSON to the GraphletDB format
 function convertNodesFromCslJson(nodesToConvert) {
     console.log("convertNodesFromCslJson", nodesToConvert);
 }
@@ -422,7 +422,7 @@ function convertNodesFromCslJson(nodesToConvert) {
 /********************************** EXPORTS ******************************************/
 
 module.exports = {
-    aboutGraphletJS,
+    aboutGraphletDB,
     getTypeStr,
     getRandomToken,
     listFoundKeyVal,
