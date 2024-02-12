@@ -1,0 +1,41 @@
+{
+    "@context": {
+        "gdb": "http://www.graphletdb.com/props/",
+        "dc": "http://purl.org/dc/terms/"
+    },
+    "@id": "http://graphletdb.com/dataset/dataset.json",
+    "@type": "dc:Dataset",
+    "creator": {
+        "@type": "Organization",
+        "url": "https://graphletdb.com/",
+        "name": "GraphletDB",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "work",
+            "email": "info@graphletdb.com"
+        }
+    },
+    "distribution": {
+        "@type": "DataDownload",
+        "encodingFormat": "JSON",
+        "contentUrl": "https://graphletdb.com/dataset/dataset.json"
+    },
+    "radioOption": {},
+    "templates": {
+        "gdb:TypeCollection": {
+            "@type": "gdb:TypeCollection",
+            "gdb:typeName": "",
+            "gdb:entries": []
+        },
+        "gdb:CoreTemplateObject": {
+            "gdb:@date": [
+                ""
+            ],
+            "gdb:@id": "",
+            "@type": "archively:CoreTemplateObject",
+            "gdb:@text": "",
+            "gdb:rel__nodes": []
+        }
+    },
+    "@graph": {}
+}
