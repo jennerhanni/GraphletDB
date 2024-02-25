@@ -22,7 +22,7 @@ function getTypeStr(fullTypeString) {
         console.error(err);
         throw err; 
     }
-}
+}   
 
 // this expects @graph
 // generate a random lowercase hexstring
@@ -205,6 +205,99 @@ const getListOfObjFromListOfIds = (nodesDict, ids, targetType, key) => {
 }
 
 
+/****************************** Search / Sort / Filter *******************************/
+
+const addCriteria = (criteriaToAdd, filterCriteriaList) => {
+    console.log('addCriteria', criteriaToAdd, filterCriteriaList)
+
+    const exists = filterCriteriaList
+                    .some(criteria => JSON.stringify(criteria) === 
+                                        JSON.stringify(criteriaToAdd));
+    if (!exists) {
+        filterCriteriaList.push(criteriaToAdd);
+    }
+}
+
+const dropCriteria = (criteriaToDrop, filterCriteriaList) => { 
+    console.log('dropCriteria', criteriaToDrop, filterCriteriaList)
+
+    const updatedList = filterCriteriaList.filter(criteria => JSON.stringify(criteria) !== JSON.stringify(criteriaToDrop));
+    filterCriteriaList.length = 0;
+    updatedList.forEach(criteria => filterCriteriaList.push(criteria))
+} 
+
+
+const filterNodesToFlatArray = (refNodes, filterCriteria) => {
+    console.log('filterNodesToFlatArray', refNodes, filterCriteria);
+    let filteredNodes = [];
+
+    // if no criteria provided, flatten all entries from all node types into a single array
+    if (!filterCriteria || filterCriteria.length === 0) {
+        Object.values(refNodes).forEach(typeCollection => {
+            if (typeCollection && typeCollection['gdb:entries']) {
+                filteredNodes = filteredNodes.concat(typeCollection['gdb:entries']);
+            }
+        });
+        return filteredNodes;
+    }
+
+    // first, get a filteredEntries list of all entries matching any 'only' criteria
+    const onlyTypesCriteria = filterCriteria.filter(c => c.matchType === 'only').flatMap(c => c.nodeTypes);
+    
+    if (onlyTypesCriteria && onlyTypesCriteria.length > 0) {
+        onlyTypesCriteria.forEach(type => {
+            if (refNodes[type] && refNodes[type]['gdb:entries']) {
+                filteredNodes = filteredNodes.concat(refNodes[type]['gdb:entries']);
+            }
+        });        
+    } else {
+        Object.values(refNodes).forEach(typeCollection => {
+            if (typeCollection && typeCollection['gdb:entries']) {
+                filteredNodes = filteredNodes.concat(typeCollection['gdb:entries']);
+            }
+        });
+    }
+
+    // for each remaining criteria that aren't matchType === 'only'
+    const remainingCriteria = filterCriteria.filter(c => c.matchType !== 'only')
+
+    // apply each filter criteria
+    remainingCriteria.forEach(c => {
+        const { key, val, matchType, nodeTypes } = c;
+
+        filteredNodes = filteredNodes.filter(nodeToCheck => {
+            if (nodeTypes.includes(nodeToCheck['@type'])) {
+                switch (matchType) {
+                    case 'exact':
+                        return nodeToCheck[key] === val;
+                    case 'includes':
+                        return nodeToCheck[key]?.includes(val);
+                    case 'minLength':
+                        return Array.isArray(nodeToCheck[key]) && nodeToCheck[key].length >= val;
+                    
+                    default:
+                        return false;
+                }
+            }
+        })
+    })
+    return filteredNodes;
+};
+
+  
+
+const filterNodesToTypeColls = (refNodes, filterCriteria) => {
+    // If no filter criteria are provided, return the nodes as-is
+    if (!filterCriteria || filterCriteria.length === 0) {
+        return refNodes;
+    }
+
+    return 
+
+    return filteredNodes;
+};
+
+  
 /****************************** List & Node Handling *********************************/
 
 // create a new type collection
@@ -432,6 +525,11 @@ module.exports = {
     getDateObjects,
     hasRelProps,
     getListOfObjFromListOfIds,
+
+    addCriteria,
+    dropCriteria,
+    filterNodesToFlatArray,
+    filterNodesToTypeColls,
 
     initNode,
     
