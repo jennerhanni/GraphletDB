@@ -241,9 +241,11 @@ const filterNodesToFlatArray = (refNodes, filterCriteria) => {
         return filteredNodes;
     }
 
-    // first, get a filteredEntries list of all entries matching any 'only' criteria
+    // sort out the criteria
     const onlyTypesCriteria = filterCriteria.filter(c => c.matchType === 'only').flatMap(c => c.nodeTypes);
+    const remainingCriteria = filterCriteria.filter(c => c.matchType !== 'only')
     
+    // apply the 'only' criteria
     if (onlyTypesCriteria && onlyTypesCriteria.length > 0) {
         onlyTypesCriteria.forEach(type => {
             if (refNodes[type] && refNodes[type]['gdb:entries']) {
@@ -258,10 +260,7 @@ const filterNodesToFlatArray = (refNodes, filterCriteria) => {
         });
     }
 
-    // for each remaining criteria that aren't matchType === 'only'
-    const remainingCriteria = filterCriteria.filter(c => c.matchType !== 'only')
-
-    // apply each filter criteria
+    // apply each remaining criteria
     remainingCriteria.forEach(c => {
         const { key, val, matchType, nodeTypes } = c;
 
@@ -287,16 +286,53 @@ const filterNodesToFlatArray = (refNodes, filterCriteria) => {
   
 
 const filterNodesToTypeColls = (refNodes, filterCriteria) => {
-    // If no filter criteria are provided, return the nodes as-is
+    console.log('filterNodesWithStructure', refNodes, filterCriteria);
+    let filteredNodes = [];
+
+    // if no criteria provided, flatten all entries from all node types into a single array
     if (!filterCriteria || filterCriteria.length === 0) {
         return refNodes;
     }
 
-    return 
+    // sort out the criteria
+    const onlyTypesCriteria = filterCriteria.filter(c => c.matchType === 'only').flatMap(c => c.nodeTypes);
+    const remainingCriteria = filterCriteria.filter(c => c.matchType !== 'only');
+
+    // apply the criteria 
+    Object.keys(refNodes).forEach(nodeType => {
+        if (onlyTypesCriteria.length === 0 || onlyTypesCriteria.includes(nodeType)) {
+            const typeCollection = refNodes[nodeType];
+            if (typeCollection && typeCollection['gdb:entries']) {
+                let filteredEntries = typeCollection['gdb:entries'].filter(entry => {
+                    
+                    return remainingCriteria.every(c => {
+                        const { key, val, matchType, nodeTypes } = c;
+                        if (nodeTypes && !nodeTypes.includes(entry['@type'])) {
+                            return false;
+                        }
+                        switch (matchType) {
+                            case 'exact':
+                                return entry[key] === val;
+                            case 'includes':
+                                return entry[key]?.includes(val);
+                            case 'minLength':
+                                return Array.isArray(entry[key]) && entry[key].length >= val;
+                            default:
+                                return true; 
+                        }
+                    });
+                });
+
+                if (filteredEntries.length > 0) {
+                    filteredNodes[nodeType] = { ...typeCollection, 'gdb:entries': filteredEntries };
+                }
+            }
+        }
+    });
 
     return filteredNodes;
 };
-
+    
   
 /****************************** List & Node Handling *********************************/
 
