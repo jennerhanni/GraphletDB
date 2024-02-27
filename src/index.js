@@ -270,7 +270,8 @@ const filterNodesToFlatArray = (refNodes, filterCriteria) => {
                     case 'exact':
                         return nodeToCheck[key] === val;
                     case 'includes':
-                        return nodeToCheck[key]?.includes(val);
+                        console.log('test')
+                        return nodeToCheck[key]?.toLowerCase().includes(val.toLowerCase())
                     case 'minLength':
                         return Array.isArray(nodeToCheck[key]) && nodeToCheck[key].length >= val;
                     
@@ -314,7 +315,7 @@ const filterNodesToTypeColls = (refNodes, filterCriteria) => {
                             case 'exact':
                                 return entry[key] === val;
                             case 'includes':
-                                return entry[key]?.includes(val);
+                                return entry[key]?.toLowerCase().includes(val.toLowerCase())
                             case 'minLength':
                                 return Array.isArray(entry[key]) && entry[key].length >= val;
                             default:
