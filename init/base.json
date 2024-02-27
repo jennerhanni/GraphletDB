@@ -18,7 +18,8 @@
     "distribution": {
         "@type": "DataDownload",
         "encodingFormat": "JSON",
-        "contentUrl": "https://graphletdb.com/dataset/dataset.json"
+        "contentUrl": "https://graphletdb.com/dataset/dataset.json",
+        "releaseDate": "202402270831"
     },
     "radioOption": {},
     "templates": {
