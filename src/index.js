@@ -32,12 +32,13 @@ function getRandomToken(nodesDict, len) {
     let count = 0;
     
     do {
-        token = "";
-        for (let i = 0; i < len; i++) {
-            token += Math.floor(Math.random() * 16).toString(16); 
-        }
+      token = "";
+      for (let i = 0; i < len; i++) {
+          token += Math.floor(Math.random() * 16).toString(16); 
+      }
 
-        // check if token is unique
+      // check if token is unique if the nodesDict exists
+      if (nodesDict) {
         let existingNodesList = listFoundKeyVal(nodesDict, null, "id", token, true)
         if (existingNodesList.length === 0) {
             isUnique = true
@@ -47,6 +48,7 @@ function getRandomToken(nodesDict, len) {
             throw new Error("Ten random keys failed uniqueness check.")
             break;
         }   
+      }
     } while (!isUnique);
 
     return token
@@ -268,7 +270,7 @@ const filterNodesToFlatArray = (refNodes, filterCriteria) => {
             if (nodeTypes.includes(nodeToCheck['@type'])) {
                 switch (matchType) {
                     case 'exact':
-                        return nodeToCheck[key] === val;
+                        return nodeToCheck[key] == val;
                     case 'includes':
                         console.log('test')
                         return nodeToCheck[key]?.toLowerCase().includes(val.toLowerCase())
@@ -281,6 +283,7 @@ const filterNodesToFlatArray = (refNodes, filterCriteria) => {
             }
         })
     })
+    console.log('RESULT RESULT', filteredNodes)
     return filteredNodes;
 };
 
@@ -313,7 +316,7 @@ const filterNodesToTypeColls = (refNodes, filterCriteria) => {
                         }
                         switch (matchType) {
                             case 'exact':
-                                return entry[key] === val;
+                                return entry[key] == val;
                             case 'includes':
                                 return entry[key]?.toLowerCase().includes(val.toLowerCase())
                             case 'minLength':
