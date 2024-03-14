@@ -43,7 +43,7 @@ function getRandomToken(nodesDict, len) {
         if (existingNodesList.length === 0) {
             isUnique = true
         }
-        count++; listFoundKey
+        count++; 
         if (count >= 10) {
             throw new Error("Ten random keys failed uniqueness check.")
             break;
@@ -60,7 +60,7 @@ function getRandomToken(nodesDict, len) {
 // return only the first node encountered.
 // TODO: add a type arg to make the lookup faster by limiting to typecollection
 function listFoundKeyVal(nodesDict, targetType, key, value, firstOnly=false) {
-    console.log('listFoundKeyVal', targetType, key, value, firstOnly)
+    //console.log('listFoundKeyVal', targetType, key, value, firstOnly)
     try {
         if (typeof nodesDict !== "object" || Array.isArray(nodesDict)) {
             throw new Error("Invalid or inappropriate @graph structure");
@@ -189,7 +189,7 @@ const hasRelProps = (nodeToAdd) => {
 
 // from a list of ids, create a list of node objects
 const getListOfObjFromListOfIds = (nodesDict, ids, targetType, key) => {
-    console.log("getListOfObjFromListOfIds", ids, targetType, key)
+    //console.log("getListOfObjFromListOfIds", ids, targetType, key)
     let listOfNodeObjects = [];
 
     for (let id of ids) {
